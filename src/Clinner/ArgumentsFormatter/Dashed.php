@@ -2,7 +2,7 @@
 
 namespace Clinner\ArgumentsFormatter;
 
-use Clinner\ArgumentsFormatter\Base;
+use Clinner\ArgumentsFormatter\Customizable;
 
 
 /**
@@ -11,16 +11,27 @@ use Clinner\ArgumentsFormatter\Base;
  *
  * @author José Nahuel Cuesta Luengo <nahuelcuestaluengo@gmail.com>
  */
-class Dashed extends Base
+class Dashed extends Customizable
 {
     /**
-     * Get the format String to use in a sprintf() call to format the
-     * argument name and value.
+     * Get the prefix for this argument formatter: '-'.
+     * This method disregards any previously-set prefix.
      *
      * @return string
      */
-    public function getFormat()
+    public function getPrefix()
     {
-        return '-%s=%s';
+        return '-';
+    }
+    
+    /**
+     * Get the separator for this argument formatter: '='.
+     * This method disregards any previously-set separator.
+     *
+     * @return string
+     */
+    public function getSeparator()
+    {
+        return '=';
     }
 }

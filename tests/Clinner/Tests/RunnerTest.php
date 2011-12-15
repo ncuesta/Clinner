@@ -3,6 +3,7 @@
 namespace Clinner\Tests;
 
 use Clinner\Runner;
+use Clinner\ArgumentsFormatter\DoubleDashed;
 
 
 /**
@@ -12,8 +13,8 @@ use Clinner\Runner;
  */
 class RunnerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testConstructor()
+    public function testConstructorWithoutFormatter()
     {
-        $this->markTestSkipped();
+        
     }
 }

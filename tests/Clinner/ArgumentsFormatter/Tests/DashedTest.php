@@ -12,10 +12,17 @@ use Clinner\ArgumentsFormatter\Dashed;
  */
 class DashedTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetFormat()
+    public function testPrefixIsSingleDash()
     {
         $dashed = new Dashed();
         
-        $this->assertStringStartsWith('-', $dashed->getFormat());
+        $this->assertEquals('-', $dashed->getPrefix());
+    }
+    
+    public function testSeparatorIsEquals()
+    {
+        $dashed = new Dashed();
+        
+        $this->assertEquals('=', $dashed->getSeparator());
     }
 }
