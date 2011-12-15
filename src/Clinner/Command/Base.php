@@ -141,4 +141,14 @@ abstract class Base implements CommandInterface
     {
         return $this->_args->getAll();
     }
+
+    /**
+     * Get the string representation for this command.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getName();
+    }
 }

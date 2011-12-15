@@ -3,7 +3,6 @@
 namespace Clinner\Command;
 
 use Clinner\Command\Base;
-use Clinner\ValueHolder;
 
 
 /**
