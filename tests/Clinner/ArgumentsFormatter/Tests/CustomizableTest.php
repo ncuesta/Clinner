@@ -31,19 +31,6 @@ class CustomizableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($separator, $customizable->getSeparator());
     }
     
-    /**
-     * Data provider for testConstructorWihParams() and testGetFormatWithParams()
-     */
-    public function getConstructorParams()
-    {
-        return array(
-            array('-', ' '),
-            array('--', '='),
-            array('=', '-'),
-            array('- ', ' = '),
-        );
-    }
-    
     public function testSetPrefix()
     {
         $customizable = new Customizable();
@@ -77,5 +64,18 @@ class CustomizableTest extends \PHPUnit_Framework_TestCase
         $expected = "{$prefix}%s{$separator}%s";
 
         $this->assertEquals($expected, $customizable->getFormat());
+    }
+    
+    /**
+     * Data provider for testConstructorWihParams() and testGetFormatWithParams()
+     */
+    public function getConstructorParams()
+    {
+        return array(
+            array('-', ' '),
+            array('--', '='),
+            array('=', '-'),
+            array('- ', ' = '),
+        );
     }
 }

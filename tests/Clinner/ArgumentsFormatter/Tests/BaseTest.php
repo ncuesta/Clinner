@@ -23,6 +23,9 @@ class BaseTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $got);
     }
     
+    /**
+     * Data provider for testFormat().
+     */
     public function getArguments()
     {
         return array(
@@ -35,6 +38,10 @@ class BaseTest extends \PHPUnit_Framework_TestCase
     }
 }
 
+/**
+ * Concrete implementation of Base class.
+ * **For testing purposes only**
+ */
 class ConcreteBase extends Base
 {
     public function getFormat() { return '%s=%s'; }

@@ -11,20 +11,25 @@ class Runner
     /**
      * Arguments formatter.
      *
-     * @var Clinner\ArgumentsFormatter\ArgumentsFormatterInterface
+     * @var \Clinner\ArgumentsFormatter\ArgumentsFormatterInterface
      */
     private $_formatter;
     
     /**
      * Constructor.
      *
-     * @param Clinner\ArgumentsFormatter\ArgumentsFormatterInterface $formatter (Optional) arguments formatter.
+     * @param \Clinner\ArgumentsFormatter\ArgumentsFormatterInterface $formatter (Optional) arguments formatter.
      */
     public function __construct(ArgumentsFormatterInterface $formatter = null)
     {
         $this->_formatter = $formatter ?: $this->_getDefaultFormatter();
     }
     
+    /**
+     * Get the formatter for this Runner's arguments.
+     *
+     * @return \Clinner\ArgumentsFormatter\ArgumentsFormatterInterface
+     */
     public function getFormatter()
     {
         return $this->_formatter;
@@ -33,7 +38,7 @@ class Runner
     /**
      * Get a default formatter to use when none is provided.
      *
-     * @return Clinner\ArgumentsFormatter\DoubleDashed
+     * @return \Clinner\ArgumentsFormatter\DoubleDashed
      */
     protected function _getDefaultFormatter()
     {
