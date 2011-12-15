@@ -12,6 +12,45 @@ use Clinner\ValueHolder;
  */
 class ValueHolderTest extends \PHPUnit_Framework_TestCase
 {
+    public function testStaticCreateWithoutInitialValues()
+    {
+        $valueHolder = ValueHolder::create();
+        
+        $this->assertInstanceOf(
+            '\\Clinner\\ValueHolder',
+            $valueHolder
+        );
+        $this->assertAttributeEmpty('_values', $valueHolder);
+    }
+    
+    public function testStaticCreateWithInitialValuesArray()
+    {
+        $initialValues = array(
+            'key' => 'value',
+        );
+        
+        $valueHolder = ValueHolder::create($initialValues);
+        
+        $this->assertInstanceOf(
+            '\\Clinner\\ValueHolder',
+            $valueHolder
+        );
+        $this->assertAttributeNotEmpty('_values', $valueHolder);
+        $this->assertEquals($initialValues, $valueHolder->getAll());
+    }
+    
+    public function testStaticCreateWithInitialValuesValueHolder()
+    {
+        $initialValues = array(
+            'key' => 'value',
+        );
+        $sourceValueHolder = new ValueHolder($initialValues);
+        
+        $valueHolder = ValueHolder::create($sourceValueHolder);
+        
+        $this->assertSame($sourceValueHolder, $valueHolder);
+    }
+    
     public function testConstructorWithoutValues()
     {
         $valueHolder = new ValueHolder();

@@ -20,6 +20,24 @@ class ValueHolder
     private $_values;
     
     /**
+     * Create a new instance of ValueHolder with an optional initial set of values.
+     * $initial might either be an array or another instance of ValueHolder, in which
+     * case it will be returned as is.
+     *
+     * @param array|\Clinner\ValueHolder $initial (Optional) initial set of values.
+     *
+     * @return \Clinner\ValueHolder
+     */
+    static public function create($initial = array())
+    {
+        if ($initial instanceof self) {
+            return $initial;
+        } else {
+            return new self($initial);
+        }
+    }
+    
+    /**
      * Constructor
      *
      * @param array $initial (Optional) initial values for the ValueHolder.
