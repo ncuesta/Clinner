@@ -12,18 +12,20 @@ use Clinner\Executor\Executor;
  */
 class Buffered extends Executor
 {
+    /**
+     * Buffer for this executor.
+     *
+     * @var string
+     */
     private $_buffer;
-
-    public function __construct($buffer)
-    {
-        $this->_buffer = $buffer;
-    }
 
     /**
      * Hook for pre-execution preparation.
      */
     protected function _preExecute()
     {
+        $this->_buffer = '';
+
         ob_start();
     }
 
@@ -35,5 +37,15 @@ class Buffered extends Executor
         $this->_buffer = ob_get_contents();
 
         ob_end_clean();
+    }
+
+    /**
+     * Get the buffer.
+     *
+     * @return string
+     */
+    public function getBuffer()
+    {
+        return $this->_buffer;
     }
 }

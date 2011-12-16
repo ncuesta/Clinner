@@ -1,5 +1,6 @@
 <?php
 
+namespace Clinner\Command;
 
 /**
  * Command Interface

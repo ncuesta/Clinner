@@ -20,5 +20,5 @@ interface ExecutorInterface
      *
      * @return int The exit code for $command.
      */
-    public function execute(string $command);
+    public function execute($command);
 }
