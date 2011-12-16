@@ -1,35 +1,32 @@
 <?php
 
-namespace Clinner\Tests;
-
-use Clinner\Command;
-use Clinner\ValueHolder;
+namespace Clinner\Command\Tests;
 
 
 /**
- * Command test cases.
+ * Base command test cases.
  *
  * @author José Nahuel Cuesta Luengo <nahuelcuestaluengo@gmail.com>
  */
-class CommandTest extends \PHPUnit_Framework_TestCase
+class BaseTest extends \PHPUnit_Framework_TestCase
 {
     public function testStaticCreate()
     {
-        $command = Command::create('name');
-        
+        $command = ConcreteBase::create('name');
+
         $this->assertInstanceOf(
-            '\\Clinner\\Command',
+            '\\Clinner\\Command\\Base',
             $command
         );
         $this->assertEquals('name', $command->getName());
     }
-    
+
     public function testConstructorWithoutArgs()
     {
-        $command = new Command('name');
+        $base = new ConcreteBase('name');
         
-        $this->assertEquals('name', $command->getName());
-        $this->assertEmpty($command->getArgumentsArray());
+        $this->assertEquals('name', $base->getName());
+        $this->assertEmpty($base->getArgumentsArray());
     }
     
     public function testConstructorWithArgsArray()
@@ -38,18 +35,18 @@ class CommandTest extends \PHPUnit_Framework_TestCase
             'key' => 'value',
             'other',
         );
-        $command = new Command('name', $args);
+        $base = new ConcreteBase('name', $args);
         
-        $this->assertEquals($args, $command->getArgumentsArray());
+        $this->assertEquals($args, $base->getArgumentsArray());
     }
     
     public function testConstructorWithArgsValueHolder()
     {
         $valueHolderMock = $this->getMock('\\Clinner\\ValueHolder');
         
-        $command = new Command('name', $valueHolderMock);
+        $base = new ConcreteBase('name', $valueHolderMock);
         
-        $this->assertSame($valueHolderMock, $command->getArguments());
+        $this->assertSame($valueHolderMock, $base->getArguments());
     }
     
     public function testGetArgument()
@@ -64,12 +61,12 @@ class CommandTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo('other'))
             ->will($this->returnValue('otherValue'));
         
-        $command = new Command('name', $valueHolderMock);
+        $base = new ConcreteBase('name', $valueHolderMock);
         
-        $got = $command->getArgument('key');
+        $got = $base->getArgument('key');
         $this->assertEquals('value', $got);
         
-        $got = $command->getArgument('other');
+        $got = $base->getArgument('other');
         $this->assertEquals('otherValue', $got);
     }
     
@@ -83,48 +80,48 @@ class CommandTest extends \PHPUnit_Framework_TestCase
             ->method('set')
             ->with($this->equalTo('other'), $this->equalTo('otherValue'));
         
-        $command = new Command('name', $valueHolderMock);
+        $base = new ConcreteBase('name', $valueHolderMock);
         
-        $this->assertSame($command, $command->setArgument('key', 'value'));
-        $this->assertSame($command, $command->setArgument('other', 'otherValue'));
+        $this->assertSame($base, $base->setArgument('key', 'value'));
+        $this->assertSame($base, $base->setArgument('other', 'otherValue'));
     }
     
     public function testGetName()
     {
-        $command = new Command('name');
+        $base = new ConcreteBase('name');
         
-        $this->assertEquals('name', $command->getName());
+        $this->assertEquals('name', $base->getName());
         
-        $command->setName('otherName');
+        $base->setName('otherName');
         
-        $this->assertEquals('otherName', $command->getName());
+        $this->assertEquals('otherName', $base->getName());
     }
     
     public function testSetName()
     {
-        $command = new Command('name');
+        $base = new ConcreteBase('name');
         
-        $this->assertSame($command, $command->setName('otherName'));
+        $this->assertSame($base, $base->setName('otherName'));
         
-        $this->assertEquals('otherName', $command->getName());
+        $this->assertEquals('otherName', $base->getName());
     }
     
     public function testGetArguments()
     {
         $valueHolderMock = $this->getMock('\\Clinner\\ValueHolder');
-        $command = new Command('name', $valueHolderMock);
+        $base = new ConcreteBase('name', $valueHolderMock);
         
-        $this->assertSame($valueHolderMock, $command->getArguments());
+        $this->assertSame($valueHolderMock, $base->getArguments());
     }
     
     public function testSetArguments()
     {
         $valueHolderMock = $this->getMock('\\Clinner\\ValueHolder');
-        $command = new Command('name');
+        $base = new ConcreteBase('name');
         
-        $this->assertSame($command, $command->setArguments($valueHolderMock));
+        $this->assertSame($base, $base->setArguments($valueHolderMock));
         
-        $this->assertSame($valueHolderMock, $command->getArguments());
+        $this->assertSame($valueHolderMock, $base->getArguments());
     }
     
     public function testGetArgumentsArray()
@@ -134,13 +131,22 @@ class CommandTest extends \PHPUnit_Framework_TestCase
             ->method('getAll')
             ->will($this->returnValue(array()));
         
-        $command = new Command('name', $valueHolderMock);
+        $base = new ConcreteBase('name', $valueHolderMock);
         
-        $this->assertEquals(array(), $command->getArgumentsArray());
+        $this->assertEquals(array(), $base->getArgumentsArray());
     }
     
-    public function testRun()
+    public function testToString()
     {
-        $this->markTestSkipped();
+        $base = new ConcreteBase('name');
+
+        $this->assertEquals('name', $base->__toString());
     }
+}
+
+/**
+ * Concrete implementation class of Base so as to be able to test it.
+ */
+class ConcreteBase extends \Clinner\Command\Base
+{
 }

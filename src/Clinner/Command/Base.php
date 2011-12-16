@@ -30,20 +30,22 @@ abstract class Base implements CommandInterface
      * @var \Clinner\ValueHolder
      */
     private $_args;
-    
+
     /**
-     * Create a new Command and return it.
+     * Create a new command and return it.
      * Shorthand method for using chained API methods.
      *
      * @param  string The name of the command to create.
      *
-     * @return Command
+     * @return \Clinner\Command\Base
      */
     static public function create($name)
     {
-        return new self($name);
+        $class = get_called_class();
+
+        return new $class($name);
     }
-    
+
     /**
      * Constructor.
      *

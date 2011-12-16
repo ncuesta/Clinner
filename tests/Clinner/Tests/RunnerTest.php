@@ -35,15 +35,34 @@ class RunnerTest extends \PHPUnit_Framework_TestCase
     
     public function testRun()
     {
-        $commandMock = $this->getMockBuilder('\\Clinner\\Command')
+        $commandMock = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('run'))
+            ->setMethods(array('getName', 'getArgumentsArray'))
             ->getMock();
         $commandMock->expects($this->once())
-            ->method('run');
-        
-        $runner = new Runner();
-        $runner->run($commandMock);
+            ->method('getName')
+            ->will($this->returnValue('name'));
+        $commandMock->expects($this->once())
+            ->method('getArgumentsArray')
+            ->will($this->returnValue(array()));
+
+        $formatterMock = $this->getMock('\\Clinner\\ArgumentsFormatter\\Dashed');
+        $formatterMock->expects($this->once())
+            ->method('format')
+            ->with($this->equalTo(array()))
+            ->will($this->returnValue(''));
+
+        $executorMock = $this->getMock('\\Clinner\\Executor\\Executor');
+        $executorMock->expects($this->once())
+            ->method('execute')
+            ->with($this->equalTo('name '))
+            ->will($this->returnValue(0));
+
+        $runner = new Runner($formatterMock, $executorMock);
+
+        $exitCode = $runner->run($commandMock);
+
+        $this->assertEquals(0, $exitCode);
     }
     
     /**
