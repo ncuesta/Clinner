@@ -4,6 +4,9 @@ php:
   - 5.3
   - 5.4
 
+before_install:
+  - git submodule update --init
+
 notifications:
   email:
     - nahuelcuestaluengo@gmail.com
