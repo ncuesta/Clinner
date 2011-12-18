@@ -48,4 +48,13 @@ interface CommandInterface
      * @return array
      */
     public function getArgumentsArray();
+
+    /**
+     * Run this command and get the exit code for it.
+     *
+     * @param string $input (Optional) input string for this command.
+     *
+     * @return int This command's execution exit code.
+     */
+    public function run($input = null);
 }

@@ -149,4 +149,5 @@ class BaseTest extends \PHPUnit_Framework_TestCase
  */
 class ConcreteBase extends \Clinner\Command\Base
 {
+    public function run($input = null) { }
 }

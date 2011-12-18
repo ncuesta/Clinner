@@ -18,7 +18,7 @@ class Executor extends Base
      *
      * @return int The exit code for the current command.
      */
-    protected function _execute()
+    protected function _execute($input = null)
     {
         passthru($this->getCurrentCommand(), $exitCode);
 

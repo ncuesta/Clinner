@@ -24,10 +24,11 @@ abstract class Base implements ExecutorInterface
      * a valid and non-malicious command with their arguments.
      *
      * @param  string $command The command string to execute.
+     * @param  string $input   (Optional) input string for $command.
      *
      * @return int The exit code for $command.
      */
-    public function execute($command)
+    public function execute($command, $input = null)
     {
         $this->_setCurrentCommand($command);
 
@@ -35,7 +36,7 @@ abstract class Base implements ExecutorInterface
         $this->_preExecute();
 
         // Actually execute the command
-        $exitCode = $this->_execute();
+        $exitCode = $this->_execute($input);
 
         // Allow any tear down or clean up after the execution
         $this->_postExecute();
@@ -85,9 +86,11 @@ abstract class Base implements ExecutorInterface
      * Actually execute the current command and return the exit code.
      * Current command is available via getCurrentCommand()
      *
+     * @param  string $input (Optional) input string for $command.
+     *
      * @return int The exit code for the current command.
      */
-    abstract protected function _execute();
+    abstract protected function _execute($input = null);
 
     /**
      * Hook for pre-execution preparation.
