@@ -134,4 +134,24 @@ class ValueHolder
     {
         return $this->_values;
     }
+
+    /**
+     * Get the number of arguments set to this ValueHolder.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->_values);
+    }
+
+    /**
+     * Answer whether this ValueHolder is empty.
+     *
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return $this->count() === 0;
+    }
 }

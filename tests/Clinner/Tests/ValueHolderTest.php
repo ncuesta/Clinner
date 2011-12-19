@@ -147,4 +147,36 @@ class ValueHolderTest extends \PHPUnit_Framework_TestCase
         
         $this->assertEquals($initialValues, $valueHolder->getAll());
     }
+
+    /**
+     * @dataProvider getInitialValues
+     */
+    public function testCount($initialValues)
+    {
+        $valueHolder = new ValueHolder($initialValues);
+
+        $this->assertEquals(count($initialValues), $valueHolder->count());
+    }
+
+    /**
+     * @dataProvider getInitialValues
+     */
+    public function testIsEmpty($initialValues)
+    {
+        $valueHolder = new ValueHolder($initialValues);
+
+        $this->assertEquals(empty($initialValues), $valueHolder->isEmpty());
+    }
+
+    /**
+     * Data provider for testCount() and testIsEmpty().
+     */
+    public function getInitialValues()
+    {
+        return array(
+            array(array()),
+            array(array('key' => 'value')),
+            array(array('key' => 'value', 'other' => 'otherValue')),
+        );
+    }
 }
