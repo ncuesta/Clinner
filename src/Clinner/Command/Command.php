@@ -12,40 +12,54 @@ use Clinner\ValueHolder;
  *
  * Usage examples:
  *
- * <code>
  *     // Run `ls -l -a` in the current directory
- *     $command = new \Clinner\Command\Command('ls', array('-l', '-a'));
+ *     $command = new \Clinner\Command\Command(
+ *         'ls',
+ *         array('-l', '-a')
+ *     );
  *     $command->run();
  *     echo $command->getExitCode();
  *     echo $command->getOutput();
- * </code>
  *
- * <code>
  *     // This example is equivalent to the one above
- *     $command = \Clinner\Command\Command::create('ls', array('-l', '-a'))
- *         ->run();
+ *     $command = \Clinner\Command\Command::create(
+ *         'ls',
+ *         array('-l', '-a')
+ *     )
+ *     ->run();
  *     echo $command->getExitCode();
  *     echo $command->getOutput();
- * </code>
  *
  * You can also pipe commands, just like in a command-line interface:
  *
- * <code>
  *     use \Clinner\Command\Command;
  *
- *     $systemUsers = Command::create('cat', array('/etc/passwd'))
- *         ->pipe(
- *             Command::create('grep', array('-v' => '^#'), array('delimiter' => ' '))
- *                 ->pipe(Command::create('cut', array('-d' => ':', '-f' => 1), array('delimiter' => '')))
+ *     $grepCommand = Command::create(
+ *         'grep',
+ *         array('-v' => '^#'),
+ *         array('delimiter' => ' ')
+ *     );
+ *     $cutCommand  = Command::create(
+ *         'cut',
+ *         array('-d' => ':', '-f' => 1),
+ *         array('delimiter' => '')
+ *     );
+ *     $systemUsers = Command::create(
+ *         'cat',
+ *         array('/etc/passwd')
+ *     )
+ *     ->pipe(
+ *         $grepCommand->pipe(
+ *             $cutCommand
  *         )
- *         ->run()
- *         ->getOutputAsArray("\n");
- * </code>
+ *     )
+ *     ->run()
+ *     ->getOutputAsArray("\n");
  *
  * This class may take the following options:
  *
- *     * delimiter (string): A string that will be put in key-value pairs of arguments to separate the key
- *                           from its value. Defaults to '='.
+ *   * `delimiter` (`string`): A string that will be put in key-value pairs of arguments to separate the key
+ *                             from its value. Defaults to '='.
  *
  * @author José Nahuel Cuesta Luengo <nahuelcuestaluengo@gmail.com>
  */
