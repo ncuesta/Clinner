@@ -20,6 +20,22 @@ use Clinner\Command\CommandInterface;
  *
  * Any output generated to stdout will be buffered as the command's output.
  *
+ * Usage examples:
+ *
+ * <code>
+ *     // Get all the users in the system whose username contains at least one 'a'
+ *     $systemUsers = Command::create('cat', array('/etc/passwd'))
+ *         ->pipe(
+ *             Command::create('grep', array('-v' => '^#'), array('delimiter' => ' '))
+ *                 ->pipe(
+ *                     Command::create('cut', array('-d' => ':', '-f' => 1), array('delimiter' => ''))
+ *                         ->pipe($callbackCommand)
+ *                 )
+ *         )
+ *         ->run()
+ *         ->getOutputAsArray("\n");
+ * </code>
+ *
  * @author José Nahuel Cuesta Luengo <nahuelcuestaluengo@gmail.com>
  */
 class Callback implements CommandInterface
