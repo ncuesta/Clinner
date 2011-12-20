@@ -24,6 +24,7 @@
 
 The most basic use of `Clinner` consists of including the PHAR file and using its `Command` class:
 
+```php
     // List current working directory's files and store the list as a string
     require_once 'clinner.phar';
 
@@ -44,6 +45,7 @@ The most basic use of `Clinner` consists of including the PHAR file and using it
     echo \Clinner\Command\Command::create('ls')
         ->run()
         ->getOutput();
+```
 
 ### Passing arguments
 
@@ -51,7 +53,7 @@ Commands crave for arguments, so `Clinner` offers a way to satisfying them.
 By passing in a second argument to the factory method or the constructor, or using the dedicated setter
 method `setArguments()`.
 
-
+```php
     // Commands will most certainly take arguments, so let's try something with them
     $command = new \Clinner\Command\Command('cat', array('/etc/hosts'));
     // This will run `cat /etc/hosts`
@@ -61,9 +63,10 @@ method `setArguments()`.
     echo \Clinner\Command\Command::create('cat', array('/etc/hosts'))
         ->run()
         ->getOutput();
+```
 
 Arguments can either be key-value pairs or just values. Key value pairs will be joined using a
-`delimiter` (see [Options] section for more information).
+`delimiter` (see **Options** section for more information).
 
 ### Options
 
@@ -76,6 +79,7 @@ of arguments. If not specified, it will default to the equals sign (`=`).
 
 Let's see an example:
 
+```php
     // `cut` command won't work if key-value pairs of arguments are joined with '=':
     $command = \Clinner\Command\Command::create(
         'cut',
@@ -91,6 +95,7 @@ Let's see an example:
     $command->setOptions(array('delimiter' => ''));
 
     $command->run(); // => will run `cut -d: -f1 /etc/passwd` (CORRECT)
+```
 
 ### Advanced usage: Commands pipes
 
@@ -99,6 +104,7 @@ of a command is sent to the one that is piped to it.
 
 For example, if you want to run `ls -a | grep -i clinner`, you can:
 
+```php
     $grepCommand = \Clinner\Command\Command::create('grep', array('-i', 'clinner'));
     $lsCommand   = \Clinner\Command\Command::create('ls', array('-a'));
 
@@ -115,6 +121,7 @@ For example, if you want to run `ls -a | grep -i clinner`, you can:
         ->pipe(Command::create('grep', array('-i', 'clinner')))
         ->run()
         ->getOutput();
+```
 
 Command pipes are not limited to a number of commands, you only need *at least* two commands.
 
@@ -131,6 +138,7 @@ and is expected to return an exit code. Any information output by the function (
 or `print` or any other output method) will be considered as the command output and will be sent
 to the next command in the pipe, if any.
 
+```php
     // Get all the usernames in the system that contain an 'a' in them
     $callbackCommand = new Callback(function($input) {
         foreach (explode("\n", $input) as $line) {
@@ -149,6 +157,7 @@ to the next command in the pipe, if any.
         )
         ->run()
         ->getOutputAsArray("\n");
+```
 
 ## Requirements
 
