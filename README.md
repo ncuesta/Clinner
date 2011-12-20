@@ -22,7 +22,8 @@
 
 ### Simple usage
 
-The most basic use of `Clinner` consists of including the PHAR file and using its `Command` class:
+The most basic use of `Clinner` consists of including [the PHAR file](https://github.com/ncuesta/Clinner/blob/master/clinner.phar?raw=true)
+and using its `Command` class:
 
 ```php
     // List current working directory's files and store the list as a string
