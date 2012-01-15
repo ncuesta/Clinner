@@ -26,6 +26,8 @@ The most basic use of `Clinner` consists of including [the PHAR file](https://gi
 and using its `Command` class:
 
 ```php
+<?php
+
     // List current working directory's files and store the list as a string
     require_once 'clinner.phar';
 
@@ -55,6 +57,8 @@ By passing in a second argument to the factory method or the constructor, or usi
 method `setArguments()`.
 
 ```php
+<?php
+
     // Commands will most certainly take arguments, so let's try something with them
     $command = new \Clinner\Command\Command('cat', array('/etc/hosts'));
     // This will run `cat /etc/hosts`
@@ -81,6 +85,8 @@ of arguments. If not specified, it will default to the equals sign (`=`).
 Let's see an example:
 
 ```php
+<?php
+
     // `cut` command won't work if key-value pairs of arguments are joined with '=':
     $command = \Clinner\Command\Command::create(
         'cut',
@@ -106,6 +112,8 @@ of a command is sent to the one that is piped to it.
 For example, if you want to run `ls -a | grep -i clinner`, you can:
 
 ```php
+<?php
+
     $grepCommand = \Clinner\Command\Command::create('grep', array('-i', 'clinner'));
     $lsCommand   = \Clinner\Command\Command::create('ls', array('-a'));
 
@@ -140,6 +148,8 @@ or `print` or any other output method) will be considered as the command output 
 to the next command in the pipe, if any.
 
 ```php
+<?php
+
     // Get all the usernames in the system that contain an 'a' in them
     $callbackCommand = new Callback(function($input) {
         foreach (explode("\n", $input) as $line) {
