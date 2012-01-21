@@ -153,9 +153,10 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $this->assertAttributeEmpty('_name', $command);
 
-        $command->setName($name);
+        $response = $command->setName($name);
 
         $this->assertAttributeEquals($name, '_name', $command);
+        $this->assertSame($command, $response);
     }
 
     /**
@@ -189,12 +190,13 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $this->assertAttributeEmpty('_arguments', $command);
 
-        $command->setArguments($args);
+        $response = $command->setArguments($args);
 
         $instanceValueHolder = $this->_getPrivateProperty($command, '_arguments');
 
         $this->assertInstanceof('\\Clinner\\ValueHolder', $instanceValueHolder);
         $this->assertAttributeEquals($args, '_values', $instanceValueHolder);
+        $this->assertSame($command, $response);
     }
 
     /**
@@ -211,10 +213,72 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $this->assertAttributeEmpty('_arguments', $command);
 
-        $command->setArguments($args);
+        $response = $command->setArguments($args);
 
         $this->assertAttributeInstanceof('\\Clinner\\ValueHolder', '_arguments', $command);
         $this->assertAttributeEquals($args, '_arguments', $command);
+        $this->assertSame($command, $response);
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::getOptions
+     */
+    public function testGetOptions()
+    {
+        $opts = new ValueHolder(array('one' => 'option'));
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(array('setOptions'))
+            ->getMock();
+
+        $this->_setPrivateProperty($command, '_options', $opts);
+
+        $this->assertEquals($opts, $command->getOptions());
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::setOptions
+     */
+    public function testSetOptionsWithArray()
+    {
+        $opts = array('some' => 'opt', 'another' => 'nifty option');
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getOptions'))
+            ->getMock();
+
+        $this->assertAttributeEmpty('_options', $command);
+
+        $response = $command->setOptions($opts);
+
+        $instanceValueHolder = $this->_getPrivateProperty($command, '_options');
+
+        $this->assertInstanceof('\\Clinner\\ValueHolder', $instanceValueHolder);
+        $this->assertAttributeEquals($opts, '_values', $instanceValueHolder);
+        $this->assertSame($command, $response);
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::setOptions
+     */
+    public function testSetOptionsWithValueHolder()
+    {
+        $opts = $this->getMock('\\Clinner\\ValueHolder');
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getArguments'))
+            ->getMock();
+
+        $this->assertAttributeEmpty('_options', $command);
+
+        $response = $command->setOptions($opts);
+
+        $this->assertAttributeInstanceof('\\Clinner\\ValueHolder', '_options', $command);
+        $this->assertAttributeEquals($opts, '_options', $command);
+        $this->assertSame($command, $response);
     }
 
     /**
