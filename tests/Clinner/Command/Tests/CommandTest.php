@@ -217,6 +217,13 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeEquals($args, '_arguments', $command);
     }
 
+    /**
+     * Set a private property to a Command $object.
+     *
+     * @param \Clinner\Command\Command $object The object to update.
+     * @param string                   $name   The private property name.
+     * @param mixed                    $value  The new value for the property.
+     */
     protected function _setPrivateProperty($object, $name, $value)
     {
         $property = new \ReflectionProperty(
@@ -228,6 +235,14 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $property->setValue($object, $value);
     }
 
+    /**
+     * Get the value of a private property from a Command $object.
+     *
+     * @param \Clinner\Command\Command $object The object to inspect.
+     * @param string                   $name   The private property name.
+     *
+     * @return mixed
+     */
     protected function _getPrivateProperty($object, $name)
     {
         $property = new \ReflectionProperty(
