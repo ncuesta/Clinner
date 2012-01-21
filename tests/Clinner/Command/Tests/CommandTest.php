@@ -108,4 +108,45 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command->__construct($name, $args, $opts);
     }
+
+    public function testGetName()
+    {
+        $name = 'command-name';
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(array('setName'))
+            ->getMock();
+
+        $this->_setPrivateProperty($command, '_name', $name);
+
+        $this->assertEquals($name, $command->getName());
+    }
+
+    public function testSetName()
+    {
+        $name = 'command';
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getName'))
+            ->getMock();
+
+        $this->assertAttributeEmpty('_name', $command);
+
+        $command->setName($name);
+
+        $this->assertAttributeEquals($name, '_name', $command);
+    }
+
+    protected function _setPrivateProperty($object, $name, $value)
+    {
+        $property = new \ReflectionProperty(
+            '\\Clinner\\Command\\Command',
+            $name
+        );
+
+        $property->setAccessible(true);
+        $property->setValue($object, $value);
+    }
 }
