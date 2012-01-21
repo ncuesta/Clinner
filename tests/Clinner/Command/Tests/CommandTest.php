@@ -12,6 +12,7 @@
 namespace Clinner\Command\Tests;
 
 use Clinner\Command\Command;
+use Clinner\ValueHolder;
 
 
 /**
@@ -21,6 +22,9 @@ use Clinner\Command\Command;
  */
 class CommandTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @covers \Clinner\Command\Command::create
+     */
     public function testStaticCreateNoArgsNoOpts()
     {
         $name = 'ls';
@@ -36,6 +40,9 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeEmpty('_output', $command);
     }
 
+    /**
+     * @covers \Clinner\Command\Command::create
+     */
     public function testStaticCreateWithArgsAndOpts()
     {
         $name = 'ls';
@@ -53,6 +60,9 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeEmpty('_output', $command);
     }
 
+    /**
+     * @covers \Clinner\Command\Command::__construct
+     */
     public function testConstructorDefaults()
     {
         $name = 'some-command';
@@ -80,6 +90,9 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $command->__construct($name);
     }
 
+    /**
+     * @covers \Clinner\Command\Command::__construct
+     */
     public function testConstructorWithValues()
     {
         $name = 'command-name';
@@ -109,6 +122,9 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $command->__construct($name, $args, $opts);
     }
 
+    /**
+     * @covers \Clinner\Command\Command::getName
+     */
     public function testGetName()
     {
         $name = 'command-name';
@@ -123,6 +139,9 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($name, $command->getName());
     }
 
+    /**
+     * @covers \Clinner\Command\Command::setName
+     */
     public function testSetName()
     {
         $name = 'command';
@@ -139,6 +158,65 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeEquals($name, '_name', $command);
     }
 
+    /**
+     * @covers \Clinner\Command\Command::getArguments
+     */
+    public function testGetArguments()
+    {
+        $args = new ValueHolder(array('some' => 'arg'));
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(array('setName'))
+            ->getMock();
+
+        $this->_setPrivateProperty($command, '_arguments', $args);
+
+        $this->assertEquals($args, $command->getArguments());
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::setArguments
+     */
+    public function testSetArgumentsWithArray()
+    {
+        $args = array('some' => 'arg', 'another' => 'argument');
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getArguments'))
+            ->getMock();
+
+        $this->assertAttributeEmpty('_arguments', $command);
+
+        $command->setArguments($args);
+
+        $instanceValueHolder = $this->_getPrivateProperty($command, '_arguments');
+
+        $this->assertInstanceof('\\Clinner\\ValueHolder', $instanceValueHolder);
+        $this->assertAttributeEquals($args, '_values', $instanceValueHolder);
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::setArguments
+     */
+    public function testSetArgumentsWithValueHolder()
+    {
+        $args = $this->getMock('\\Clinner\\ValueHolder');
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getArguments'))
+            ->getMock();
+
+        $this->assertAttributeEmpty('_arguments', $command);
+
+        $command->setArguments($args);
+
+        $this->assertAttributeInstanceof('\\Clinner\\ValueHolder', '_arguments', $command);
+        $this->assertAttributeEquals($args, '_arguments', $command);
+    }
+
     protected function _setPrivateProperty($object, $name, $value)
     {
         $property = new \ReflectionProperty(
@@ -148,5 +226,17 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $property->setAccessible(true);
         $property->setValue($object, $value);
+    }
+
+    protected function _getPrivateProperty($object, $name)
+    {
+        $property = new \ReflectionProperty(
+            '\\Clinner\\Command\\Command',
+            $name
+        );
+
+        $property->setAccessible(true);
+
+        return $property->getValue($object);
     }
 }
