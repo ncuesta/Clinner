@@ -52,4 +52,60 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeEmpty('_exitCode', $command);
         $this->assertAttributeEmpty('_output', $command);
     }
+
+    public function testConstructorDefaults()
+    {
+        $name = 'some-command';
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(array('setName', 'setArguments', 'setOptions'))
+            ->getMock();
+
+        $command->expects($this->once())
+            ->method('setName')
+            ->with($this->equalTo($name))
+            ->will($this->returnSelf());
+
+        $command->expects($this->once())
+            ->method('setArguments')
+            ->with($this->equalTo(array()))
+            ->will($this->returnSelf());
+
+        $command->expects($this->once())
+            ->method('setOptions')
+            ->with($this->equalTo(array()))
+            ->will($this->returnSelf());
+
+        $command->__construct($name);
+    }
+
+    public function testConstructorWithValues()
+    {
+        $name = 'command-name';
+        $args = array('first' => 'value');
+        $opts = array('delimiter' => '?');
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(array('setName', 'setArguments', 'setOptions'))
+            ->getMock();
+
+        $command->expects($this->once())
+            ->method('setName')
+            ->with($this->equalTo($name))
+            ->will($this->returnSelf());
+
+        $command->expects($this->once())
+            ->method('setArguments')
+            ->with($this->equalTo($args))
+            ->will($this->returnSelf());
+
+        $command->expects($this->once())
+            ->method('setOptions')
+            ->with($this->equalTo($opts))
+            ->will($this->returnSelf());
+
+        $command->__construct($name, $args, $opts);
+    }
 }
