@@ -15,7 +15,7 @@ echo $pc
     ->run()
     ->getOutput();
 echo 'Exit code: ' . $pc->getExitCode();
-*/
+
 
 $callbackCommand = new Callback(function($input) {
     foreach (explode("\n", $input) as $line) {
@@ -36,8 +36,8 @@ $systemUsers = Command::create('cat', array('/etc/passwd'))
     ->getOutputAsArray("\n");
 
 die(var_dump($systemUsers));
+*/
 
-/*
 echo "\n\n--------\n\n";
 
 $pc = new Clinner\Command\Command('cat', array('/etc/passwd'));
@@ -57,4 +57,3 @@ echo "Running `{$pc->toCommandString(true)}`\n";
 
 echo $pc->run()->getOutput();
 echo 'Exit code: ' . $c->getExitCode();
-*/
