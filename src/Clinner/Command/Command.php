@@ -274,17 +274,30 @@ class Command implements CommandInterface
      * is directly sent to $anotherCommand's standard input.
      *
      * @param  \Clinner\Command\CommandInterface $anotherCommand The command to pipe.
+     * @param  bool                              $appendToPipe   Whether $anotherCommand will be appended to
+     *                                                           the currently piped commands (TRUE) or if it
+     *                                                           will be added after this command, rearranging
+     *                                                           the commands pipe to include it.
      *
      * @return \Clinner\Command\Command This instance, for a fluent API.
      */
-    public function pipe($anotherCommand)
+    public function pipe($anotherCommand, $appendToPipe = true)
     {
         if ($this === $anotherCommand) {
             // Cannot pipe a command to itself, need to clone it
             $anotherCommand = clone $anotherCommand;
         }
 
-        $this->_next = $anotherCommand;
+        if ($appendToPipe && $this->hasPipedCommand()) {
+            $this->_next->pipe($anotherCommand, true);
+        } else if (!$appendToPipe) {
+            // Rearrange the commands pipe
+            if ($this->hasPipedCommand()) {
+                $anotherCommand->pipe($this->_next, false);
+            }
+
+            $this->_next = $anotherCommand;
+        }
 
         return $this;
     }

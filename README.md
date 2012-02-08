@@ -162,10 +162,11 @@ to the next command in the pipe, if any.
     $systemUsers = Command::create('cat', array('/etc/passwd'))
         ->pipe(
             Command::create('grep', array('-v' => '^#'), array('delimiter' => ' '))
-                ->pipe(Command::create('cut', array('-d' => ':', '-f' => 1), array('delimiter' => ''))
-                    ->pipe($callbackCommand)
-                )
         )
+        ->pipe(
+            Command::create('cut', array('-d' => ':', '-f' => 1), array('delimiter' => ''))
+        )
+        ->pipe($callbackCommand)
         ->run()
         ->getOutputAsArray("\n");
 ```
