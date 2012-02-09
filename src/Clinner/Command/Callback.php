@@ -36,11 +36,11 @@ use Clinner\Command\CommandInterface;
  *     $systemUsers = Command::create('cat', array('/etc/passwd'))
  *         ->pipe(
  *             Command::create('grep', array('-v' => '^#'), array('delimiter' => ' '))
- *                 ->pipe(
- *                     Command::create('cut', array('-d' => ':', '-f' => 1), array('delimiter' => ''))
- *                         ->pipe($callbackCommand)
- *                 )
  *         )
+ *         ->pipe(
+ *             Command::create('cut', array('-d' => ':', '-f' => 1), array('delimiter' => ''))
+ *         )
+ *         ->pipe($callbackCommand)
  *         ->run()
  *         ->getOutputAsArray("\n");
  * </code>
@@ -144,5 +144,48 @@ class Callback implements CommandInterface
     public function getOutput()
     {
         return $this->_output;
+    }
+    
+    /**
+     * Get the code of the inner callback as string.
+     *
+     * @return string
+     */
+    public function getCallbackCode()
+    {
+        $reflection = new \ReflectionFunction($this->_callback);
+        
+        // Open file and seek to the first line of the closure
+        $file = new \SplFileObject($reflection->getFileName());
+        $file->seek($reflection->getStartLine() - 1);
+
+        // Retrieve all of the lines that contain code for the closure
+        $code = '';
+        while ($file->key() < $reflection->getEndLine())
+        {
+            $code .= $file->current();
+            $file->next();
+        }
+
+        $begin = strpos($code, 'function');
+        $end = strrpos($code, '}');
+        $code = substr($code, $begin, $end - $begin + 1);
+
+        return $code;
+    }
+    
+    /**
+     * Get a string representation of this command with its arguments,
+     * as if it would be written in a command-line interface when run.
+     *
+     * @param  bool $includePiped (Optional) indicates whether the resulting
+     *                            string will include any piped command to this
+     *                            one. Defaults to FALSE.
+     *
+     * @return string
+     */
+    public function toCommandString($includePiped = false)
+    {
+        return $this->getCallbackCode();
     }
 }

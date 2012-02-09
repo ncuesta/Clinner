@@ -287,15 +287,19 @@ class Command implements CommandInterface
             // Cannot pipe a command to itself, need to clone it
             $anotherCommand = clone $anotherCommand;
         }
-
-        if ($appendToPipe && $this->hasPipedCommand()) {
-            $this->_next->pipe($anotherCommand, true);
-        } else if (!$appendToPipe) {
-            // Rearrange the commands pipe
+        
+        if ($appendToPipe) {
             if ($this->hasPipedCommand()) {
+                $this->_next->pipe($anotherCommand, true);
+            } else {
+                $this->_next = $anotherCommand;
+            }
+        } else {
+            if ($this->hasPipedCommand()) {
+                // Rearrange the commands pipe
                 $anotherCommand->pipe($this->_next, false);
             }
-
+            
             $this->_next = $anotherCommand;
         }
 
