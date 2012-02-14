@@ -30,5 +30,9 @@
              lowUpperBound="50"
              highLowerBound="90"
         />
+        <log type="coverage-clover"
+             target="tests/output/clover.xml"
+             charset="UTF-8"
+        />
     </logging>
 </phpunit>
