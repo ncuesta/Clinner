@@ -131,7 +131,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('setName'))
+            ->setMethods(array('none'))
             ->getMock();
 
         $this->_setPrivateProperty($command, '_name', $name);
@@ -148,7 +148,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('getName'))
+            ->setMethods(array('none'))
             ->getMock();
 
         $this->assertAttributeEmpty('_name', $command);
@@ -168,7 +168,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('setName'))
+            ->setMethods(array('none'))
             ->getMock();
 
         $this->_setPrivateProperty($command, '_arguments', $args);
@@ -185,7 +185,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('getArguments'))
+            ->setMethods(array('none'))
             ->getMock();
 
         $this->assertAttributeEmpty('_arguments', $command);
@@ -208,7 +208,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('getArguments'))
+            ->setMethods(array('none'))
             ->getMock();
 
         $this->assertAttributeEmpty('_arguments', $command);
@@ -229,7 +229,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('setOptions'))
+            ->setMethods(array('none'))
             ->getMock();
 
         $this->_setPrivateProperty($command, '_options', $opts);
@@ -246,7 +246,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('getOptions'))
+            ->setMethods(array('none'))
             ->getMock();
 
         $this->assertAttributeEmpty('_options', $command);
@@ -269,7 +269,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('getArguments'))
+            ->setMethods(array('none'))
             ->getMock();
 
         $this->assertAttributeEmpty('_options', $command);
@@ -279,6 +279,57 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeInstanceof('\\Clinner\\ValueHolder', '_options', $command);
         $this->assertAttributeEquals($opts, '_options', $command);
         $this->assertSame($command, $response);
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::getOption
+     */
+    public function testGetOptionNoDefault()
+    {
+        $optName = 'option-name';
+
+        $opts = $this->getMock('\\Clinner\\ValueHolder');
+        $opts->expects($this->once())
+            ->method('get')
+            ->with($this->equalTo($optName))
+            ->will($this->returnValue(null));
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(array('none'))
+            ->getMock();
+
+        $this->_setPrivateProperty($command, '_options', $opts);
+
+        $response = $command->getOption($optName);
+
+        $this->assertNull($response);
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::getOption
+     */
+    public function testGetOptionWithDefault()
+    {
+        $optName = 'option-name';
+        $defaultValue = 'default';
+
+        $opts = $this->getMock('\\Clinner\\ValueHolder');
+        $opts->expects($this->once())
+            ->method('get')
+            ->with($this->equalTo($optName), $this->equalTo($defaultValue))
+            ->will($this->returnValue($defaultValue));
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(array('none'))
+            ->getMock();
+
+        $this->_setPrivateProperty($command, '_options', $opts);
+
+        $response = $command->getOption($optName, $defaultValue);
+
+        $this->assertEquals($defaultValue, $response);
     }
 
     /**
