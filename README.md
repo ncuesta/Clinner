@@ -29,7 +29,7 @@ and using its `Command` class:
 <?php
 
     // List current working directory's files and store the list as a string
-    require_once 'clinner.phar';
+    require_once 'phar://clinner.phar/autoload.php';
 
     $command = new \Clinner\Command\Command('ls');
     $files = $command

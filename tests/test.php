@@ -1,7 +1,6 @@
 <?php
 
-//require_once __DIR__ . '/../autoload.php';
-require __DIR__ . '/../clinner.phar';
+require 'phar://' . __DIR__ . '/../clinner.phar/autoload.php';
 
 
 $callbackCommand = new \Clinner\Command\Callback(function($input) {

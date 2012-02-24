@@ -36,35 +36,30 @@ class Compiler
      */
     public function compile($target = 'clinner.phar')
     {
-        $this->_phar = $this->_createPhar($target);
-
-        $this
-            ->_startBuffering()
-            ->_addFiles()
-            ->_stopBuffering();
-    }
-
-    /**
-     * Create a new PHAR generator and return it.
-     * Also, remove $target file if it already exists.
-     *
-     * @param  string $target Path to the target PHAR file.
-     *
-     * @return \Phar
-     */
-    protected function _createPhar($target)
-    {
         if (file_exists($target)) {
             unlink($target);
         }
 
-        $phar = new \Phar($target, 0, 'clinner.phar');
+        $this->_phar = new \Phar($target, 0, 'clinner.phar');
+        $this->_phar->setSignatureAlgorithm(\Phar::SHA1);
 
-        $phar->setSignatureAlgorithm(\Phar::SHA1);
+        $this
+            ->_startBuffering()
+            ->_addFiles()
+            ->_createStub()
+            ->_stopBuffering();
+    }
 
-        $phar->setStub($phar->createDefaultStub('autoload.php'));
+    /**
+     * Create a new PHAR Stub.
+     *
+     * @return \Clinner\Compiler This instance, for a fluent API.
+     */
+    protected function _createStub()
+    {
+        $this->_phar->setStub($this->_phar->createDefaultStub('autoload.php'));
 
-        return $phar;
+        return $this;
     }
 
     /**
