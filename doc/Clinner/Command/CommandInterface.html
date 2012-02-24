@@ -190,7 +190,25 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
 <p><em class='docparam'>@return</em> string</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">getOutput</span><span class="p">();</span>
+              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">getOutput</span><span class="p">();</span></pre></div>            </td>
+          </tr>
+                  <tr id="section-5">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Get a string represnting this command.
+ If $includePiped is TRUE, this method must include any command(s) piped after
+ the instance in which it was called.</p>
+
+<p><em class='docparam'>@param</em>  bool $includePiped (Optional) indicates whether the resulting
+                            string will include any piped command to this
+                            one. Defaults to FALSE.</p>
+
+<p><em class='docparam'>@return</em> string</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">toCommandString</span><span class="p">(</span><span class="nv">$includePiped</span> <span class="o">=</span> <span class="k">false</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div></pre></div>            </td>
           </tr>
