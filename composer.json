@@ -1,6 +1,6 @@
 {
     "name": "ncuesta/clinner",
-    "description": "Clinner Command execution abstraction",
+    "description": "Command execution abstraction",
     "keywords": ["cli", "command", "pipe", "execution"],
     "type": "library",
     "homepage": "https://github.com/ncuesta/Clinner",
