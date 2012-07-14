@@ -136,10 +136,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
  file that was distributed with this source code.</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre><span class="nx">namespace</span> <span class="nx">Clinner</span><span class="err">\</span><span class="nx">Command</span><span class="p">;</span>
+              <div class="highlight"><pre><span class="k">namespace</span> <span class="nx">Clinner\Command</span><span class="p">;</span>
 
-<span class="nx">use</span> <span class="nx">Clinner</span><span class="err">\</span><span class="nx">Command</span><span class="err">\</span><span class="nx">CommandInterface</span><span class="p">;</span>
-<span class="nx">use</span> <span class="nx">Clinner</span><span class="err">\</span><span class="nx">ValueHolder</span><span class="p">;</span></pre></div>            </td>
+<span class="k">use</span> <span class="nx">Clinner\Command\CommandInterface</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Clinner\ValueHolder</span><span class="p">;</span></pre></div>            </td>
           </tr>
                   <tr id="section-1">
             <td class="docs">
@@ -657,24 +657,24 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_output</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
 
         <span class="nv">$descriptors</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
-            <span class="m">0</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;pipe&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">),</span>
-            <span class="m">1</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;pipe&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">),</span>
+            <span class="mi">0</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;pipe&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">),</span>
+            <span class="mi">1</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;pipe&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">),</span>
         <span class="p">);</span>
         <span class="nv">$pipes</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
 
         <span class="nv">$childProcess</span> <span class="o">=</span> <span class="nb">proc_open</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">toCommandString</span><span class="p">(),</span> <span class="nv">$descriptors</span><span class="p">,</span> <span class="nv">$pipes</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">is_resource</span><span class="p">(</span><span class="nv">$childProcess</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="err">\</span><span class="nx">RuntimeException</span><span class="p">(</span><span class="s1">&#39;Unable to run command: &#39;</span> <span class="o">.</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">toCommandString</span><span class="p">());</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">\RuntimeException</span><span class="p">(</span><span class="s1">&#39;Unable to run command: &#39;</span> <span class="o">.</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">toCommandString</span><span class="p">());</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">null</span> <span class="o">!==</span> <span class="nv">$input</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nb">fwrite</span><span class="p">(</span><span class="nv">$pipes</span><span class="p">[</span><span class="m">0</span><span class="p">],</span> <span class="nv">$input</span><span class="p">);</span>
-            <span class="nb">fclose</span><span class="p">(</span><span class="nv">$pipes</span><span class="p">[</span><span class="m">0</span><span class="p">]);</span>
+            <span class="nb">fwrite</span><span class="p">(</span><span class="nv">$pipes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nv">$input</span><span class="p">);</span>
+            <span class="nb">fclose</span><span class="p">(</span><span class="nv">$pipes</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
         <span class="p">}</span>
 
-        <span class="nv">$output</span> <span class="o">=</span> <span class="nb">stream_get_contents</span><span class="p">(</span><span class="nv">$pipes</span><span class="p">[</span><span class="m">1</span><span class="p">]);</span>
-        <span class="nb">fclose</span><span class="p">(</span><span class="nv">$pipes</span><span class="p">[</span><span class="m">1</span><span class="p">]);</span>
+        <span class="nv">$output</span> <span class="o">=</span> <span class="nb">stream_get_contents</span><span class="p">(</span><span class="nv">$pipes</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+        <span class="nb">fclose</span><span class="p">(</span><span class="nv">$pipes</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
 
         <span class="nv">$exitCode</span> <span class="o">=</span> <span class="nb">proc_close</span><span class="p">(</span><span class="nv">$childProcess</span><span class="p">);</span></pre></div>            </td>
           </tr>

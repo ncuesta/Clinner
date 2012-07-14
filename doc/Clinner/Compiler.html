@@ -136,7 +136,7 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
  file that was distributed with this source code.</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre><span class="nx">namespace</span> <span class="nx">Clinner</span><span class="p">;</span></pre></div>            </td>
+              <div class="highlight"><pre><span class="k">namespace</span> <span class="nx">Clinner</span><span class="p">;</span></pre></div>            </td>
           </tr>
                   <tr id="section-1">
             <td class="docs">
@@ -178,11 +178,17 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
             <td class="code">
               <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">compile</span><span class="p">(</span><span class="nv">$target</span> <span class="o">=</span> <span class="s1">&#39;clinner.phar&#39;</span><span class="p">)</span>
     <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_phar</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_createPhar</span><span class="p">(</span><span class="nv">$target</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">file_exists</span><span class="p">(</span><span class="nv">$target</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nb">unlink</span><span class="p">(</span><span class="nv">$target</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_phar</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Phar</span><span class="p">(</span><span class="nv">$target</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;clinner.phar&#39;</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_phar</span><span class="o">-&gt;</span><span class="na">setSignatureAlgorithm</span><span class="p">(</span><span class="nx">\Phar</span><span class="o">::</span><span class="na">SHA1</span><span class="p">);</span>
 
         <span class="nv">$this</span>
             <span class="o">-&gt;</span><span class="na">_startBuffering</span><span class="p">()</span>
             <span class="o">-&gt;</span><span class="na">_addFiles</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">_createStub</span><span class="p">()</span>
             <span class="o">-&gt;</span><span class="na">_stopBuffering</span><span class="p">();</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
@@ -191,27 +197,16 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
               <div class="pilwrap">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Create a new PHAR generator and return it.
- Also, remove $target file if it already exists.</p>
+              <p>Create a new PHAR Stub.</p>
 
-<p><em class='docparam'>@param</em>  string $target Path to the target PHAR file.</p>
-
-<p><em class='docparam'>@return</em> \Phar</p>
+<p><em class='docparam'>@return</em> \Clinner\Compiler This instance, for a fluent API.</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre>    <span class="k">protected</span> <span class="k">function</span> <span class="nf">_createPhar</span><span class="p">(</span><span class="nv">$target</span><span class="p">)</span>
+              <div class="highlight"><pre>    <span class="k">protected</span> <span class="k">function</span> <span class="nf">_createStub</span><span class="p">()</span>
     <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">file_exists</span><span class="p">(</span><span class="nv">$target</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nb">unlink</span><span class="p">(</span><span class="nv">$target</span><span class="p">);</span>
-        <span class="p">}</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_phar</span><span class="o">-&gt;</span><span class="na">setStub</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_phar</span><span class="o">-&gt;</span><span class="na">createDefaultStub</span><span class="p">(</span><span class="s1">&#39;autoload.php&#39;</span><span class="p">));</span>
 
-        <span class="nv">$phar</span> <span class="o">=</span> <span class="k">new</span> <span class="err">\</span><span class="nx">Phar</span><span class="p">(</span><span class="nv">$target</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="s1">&#39;clinner.phar&#39;</span><span class="p">);</span>
-
-        <span class="nv">$phar</span><span class="o">-&gt;</span><span class="na">setSignatureAlgorithm</span><span class="p">(</span><span class="err">\</span><span class="nx">Phar</span><span class="o">::</span><span class="na">SHA1</span><span class="p">);</span>
-
-        <span class="nv">$phar</span><span class="o">-&gt;</span><span class="na">setStub</span><span class="p">(</span><span class="nv">$phar</span><span class="o">-&gt;</span><span class="na">createDefaultStub</span><span class="p">(</span><span class="s1">&#39;autoload.php&#39;</span><span class="p">));</span>
-
-        <span class="k">return</span> <span class="nv">$phar</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
                   <tr id="section-5">
@@ -261,13 +256,13 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
               <div class="highlight"><pre>    <span class="k">protected</span> <span class="k">function</span> <span class="nf">_addFiles</span><span class="p">()</span>
     <span class="p">{</span>
         <span class="nv">$this</span>
-            <span class="o">-&gt;</span><span class="na">_addFile</span><span class="p">(</span><span class="k">new</span> <span class="err">\</span><span class="nx">SplFileInfo</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../../LICENSE&#39;</span><span class="p">),</span> <span class="k">false</span><span class="p">)</span>
-            <span class="o">-&gt;</span><span class="na">_addFile</span><span class="p">(</span><span class="k">new</span> <span class="err">\</span><span class="nx">SplFileInfo</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../../autoload.php&#39;</span><span class="p">))</span>
-            <span class="o">-&gt;</span><span class="na">_addFile</span><span class="p">(</span><span class="k">new</span> <span class="err">\</span><span class="nx">SplFileInfo</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/ValueHolder.php&#39;</span><span class="p">))</span>
-            <span class="o">-&gt;</span><span class="na">_addFile</span><span class="p">(</span><span class="k">new</span> <span class="err">\</span><span class="nx">SplFileInfo</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/Command/CommandInterface.php&#39;</span><span class="p">))</span>
-            <span class="o">-&gt;</span><span class="na">_addFile</span><span class="p">(</span><span class="k">new</span> <span class="err">\</span><span class="nx">SplFileInfo</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/Command/Command.php&#39;</span><span class="p">))</span>
-            <span class="o">-&gt;</span><span class="na">_addFile</span><span class="p">(</span><span class="k">new</span> <span class="err">\</span><span class="nx">SplFileInfo</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/Command/Callback.php&#39;</span><span class="p">))</span>
-            <span class="o">-&gt;</span><span class="na">_addfile</span><span class="p">(</span><span class="k">new</span> <span class="err">\</span><span class="nx">SplFileInfo</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../../vendor/Symfony/Component/ClassLoader/UniversalClassLoader.php&#39;</span><span class="p">));</span>
+            <span class="o">-&gt;</span><span class="na">_addFile</span><span class="p">(</span><span class="k">new</span> <span class="nx">\SplFileInfo</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../../LICENSE&#39;</span><span class="p">),</span> <span class="k">false</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">_addFile</span><span class="p">(</span><span class="k">new</span> <span class="nx">\SplFileInfo</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../../autoload.php&#39;</span><span class="p">))</span>
+            <span class="o">-&gt;</span><span class="na">_addFile</span><span class="p">(</span><span class="k">new</span> <span class="nx">\SplFileInfo</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/ValueHolder.php&#39;</span><span class="p">))</span>
+            <span class="o">-&gt;</span><span class="na">_addFile</span><span class="p">(</span><span class="k">new</span> <span class="nx">\SplFileInfo</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/Command/CommandInterface.php&#39;</span><span class="p">))</span>
+            <span class="o">-&gt;</span><span class="na">_addFile</span><span class="p">(</span><span class="k">new</span> <span class="nx">\SplFileInfo</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/Command/Command.php&#39;</span><span class="p">))</span>
+            <span class="o">-&gt;</span><span class="na">_addFile</span><span class="p">(</span><span class="k">new</span> <span class="nx">\SplFileInfo</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/Command/Callback.php&#39;</span><span class="p">))</span>
+            <span class="o">-&gt;</span><span class="na">_addfile</span><span class="p">(</span><span class="k">new</span> <span class="nx">\SplFileInfo</span><span class="p">(</span><span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../../vendor/Symfony/Component/ClassLoader/UniversalClassLoader.php&#39;</span><span class="p">));</span>
 
         <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
@@ -285,7 +280,7 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
 <p><em class='docparam'>@return</em> \Clinner\Compiler This instance, for a fluent API.</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre>    <span class="k">protected</span> <span class="k">function</span> <span class="nf">_addFile</span><span class="p">(</span><span class="err">\</span><span class="nx">SplFileInfo</span> <span class="nv">$file</span><span class="p">,</span> <span class="nv">$removeComments</span> <span class="o">=</span> <span class="k">true</span><span class="p">)</span>
+              <div class="highlight"><pre>    <span class="k">protected</span> <span class="k">function</span> <span class="nf">_addFile</span><span class="p">(</span><span class="nx">\SplFileInfo</span> <span class="nv">$file</span><span class="p">,</span> <span class="nv">$removeComments</span> <span class="o">=</span> <span class="k">true</span><span class="p">)</span>
     <span class="p">{</span>
         <span class="nv">$path</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span>
             <span class="nb">dirname</span><span class="p">(</span><span class="nb">dirname</span><span class="p">(</span><span class="nx">__DIR__</span><span class="p">))</span> <span class="o">.</span> <span class="nx">DIRECTORY_SEPARATOR</span><span class="p">,</span>
@@ -332,10 +327,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="k">foreach</span> <span class="p">(</span><span class="nb">token_get_all</span><span class="p">(</span><span class="nv">$source</span><span class="p">)</span> <span class="k">as</span> <span class="nv">$token</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nb">is_string</span><span class="p">(</span><span class="nv">$token</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nv">$output</span> <span class="o">.=</span> <span class="nv">$token</span><span class="p">;</span>
-            <span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="nv">$token</span><span class="p">[</span><span class="m">0</span><span class="p">],</span> <span class="k">array</span><span class="p">(</span><span class="nx">T_COMMENT</span><span class="p">,</span> <span class="nx">T_DOC_COMMENT</span><span class="p">)))</span> <span class="p">{</span>
-                <span class="nv">$output</span> <span class="o">.=</span> <span class="nb">str_repeat</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">substr_count</span><span class="p">(</span><span class="nv">$token</span><span class="p">[</span><span class="m">1</span><span class="p">],</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">));</span>
+            <span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="nv">$token</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="k">array</span><span class="p">(</span><span class="nx">T_COMMENT</span><span class="p">,</span> <span class="nx">T_DOC_COMMENT</span><span class="p">)))</span> <span class="p">{</span>
+                <span class="nv">$output</span> <span class="o">.=</span> <span class="nb">str_repeat</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nx">substr_count</span><span class="p">(</span><span class="nv">$token</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">));</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nv">$output</span> <span class="o">.=</span> <span class="nv">$token</span><span class="p">[</span><span class="m">1</span><span class="p">];</span>
+                <span class="nv">$output</span> <span class="o">.=</span> <span class="nv">$token</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
             <span class="p">}</span>
         <span class="p">}</span>
 

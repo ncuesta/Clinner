@@ -136,9 +136,9 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
  file that was distributed with this source code.</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre><span class="nx">namespace</span> <span class="nx">Clinner</span><span class="err">\</span><span class="nx">Command</span><span class="p">;</span>
+              <div class="highlight"><pre><span class="k">namespace</span> <span class="nx">Clinner\Command</span><span class="p">;</span>
 
-<span class="nx">use</span> <span class="nx">Clinner</span><span class="err">\</span><span class="nx">Command</span><span class="err">\</span><span class="nx">CommandInterface</span><span class="p">;</span></pre></div>            </td>
+<span class="k">use</span> <span class="nx">Clinner\Command\CommandInterface</span><span class="p">;</span></pre></div>            </td>
           </tr>
                   <tr id="section-1">
             <td class="docs">
@@ -335,7 +335,7 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
             <td class="code">
               <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">getCallbackCode</span><span class="p">()</span>
     <span class="p">{</span>
-        <span class="nv">$reflection</span> <span class="o">=</span> <span class="k">new</span> <span class="err">\</span><span class="nx">ReflectionFunction</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_callback</span><span class="p">);</span></pre></div>            </td>
+        <span class="nv">$reflection</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\ReflectionFunction</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_callback</span><span class="p">);</span></pre></div>            </td>
           </tr>
                   <tr id="section-12">
             <td class="docs">
@@ -345,8 +345,8 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
               <p>Open file and seek to the first line of the closure</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre>        <span class="nv">$file</span> <span class="o">=</span> <span class="k">new</span> <span class="err">\</span><span class="nx">SplFileObject</span><span class="p">(</span><span class="nv">$reflection</span><span class="o">-&gt;</span><span class="na">getFileName</span><span class="p">());</span>
-        <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">seek</span><span class="p">(</span><span class="nv">$reflection</span><span class="o">-&gt;</span><span class="na">getStartLine</span><span class="p">()</span> <span class="o">-</span> <span class="m">1</span><span class="p">);</span></pre></div>            </td>
+              <div class="highlight"><pre>        <span class="nv">$file</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\SplFileObject</span><span class="p">(</span><span class="nv">$reflection</span><span class="o">-&gt;</span><span class="na">getFileName</span><span class="p">());</span>
+        <span class="nv">$file</span><span class="o">-&gt;</span><span class="na">seek</span><span class="p">(</span><span class="nv">$reflection</span><span class="o">-&gt;</span><span class="na">getStartLine</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span></pre></div>            </td>
           </tr>
                   <tr id="section-13">
             <td class="docs">
@@ -365,7 +365,7 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
 
         <span class="nv">$begin</span> <span class="o">=</span> <span class="nb">strpos</span><span class="p">(</span><span class="nv">$code</span><span class="p">,</span> <span class="s1">&#39;function&#39;</span><span class="p">);</span>
         <span class="nv">$end</span> <span class="o">=</span> <span class="nb">strrpos</span><span class="p">(</span><span class="nv">$code</span><span class="p">,</span> <span class="s1">&#39;}&#39;</span><span class="p">);</span>
-        <span class="nv">$code</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$code</span><span class="p">,</span> <span class="nv">$begin</span><span class="p">,</span> <span class="nv">$end</span> <span class="o">-</span> <span class="nv">$begin</span> <span class="o">+</span> <span class="m">1</span><span class="p">);</span>
+        <span class="nv">$code</span> <span class="o">=</span> <span class="nx">substr</span><span class="p">(</span><span class="nv">$code</span><span class="p">,</span> <span class="nv">$begin</span><span class="p">,</span> <span class="nv">$end</span> <span class="o">-</span> <span class="nv">$begin</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
 
         <span class="k">return</span> <span class="nv">$code</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
