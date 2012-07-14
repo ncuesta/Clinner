@@ -10,6 +10,7 @@
 
   * Minimalistic.
   * Simple and easy to use.
+  * `Clinner` uses [Composer](http://getcomposer.org). You can use it as a dependency on your project and have it autoloaded.
   * Fluent API.
   * Higher-level and object oriented interface to commands.
   * Command pipes, **regardless of the underlying OS**.
