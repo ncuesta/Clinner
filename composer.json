@@ -13,7 +13,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3.9",
+        "php": ">=5.3",
         "symfony/class-loader": "2.1.*"
     },
     "autoload": {
