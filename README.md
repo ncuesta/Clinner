@@ -44,7 +44,6 @@ and then including Composer's `autoloader.php` in your code:
 ```
 
 3. Start using commands *right away*!  
-
 ```php
     <?php
 
