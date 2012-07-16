@@ -104,6 +104,12 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
                               Command.php              </a>
                                         <a class="source" href="../../Clinner/Command/CommandInterface.html">
                               CommandInterface.php              </a>
+                                        <a class="source" href="../../Clinner/Command/NullCommand.html">
+                              NullCommand.php              </a>
+                                        <a class="source" href="../../Clinner/Command/PipeableCommandInterface.html">
+                              PipeableCommandInterface.php              </a>
+                                        <a class="source" href="../../Clinner/Command/PipingCommandInterface.html">
+                              PipingCommandInterface.php              </a>
                                         <a class="source" href="../../Clinner/ValueHolder.html">
                               ValueHolder.php              </a>
                       </div>
@@ -136,7 +142,6 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
             <td class="code">
               <div class="highlight"><pre><span class="k">namespace</span> <span class="nx">Clinner\Command</span><span class="p">;</span>
 
-<span class="k">use</span> <span class="nx">Clinner\Command\CommandInterface</span><span class="p">;</span>
 <span class="k">use</span> <span class="nx">Clinner\ValueHolder</span><span class="p">;</span></pre></div>            </td>
           </tr>
                   <tr id="section-1">
@@ -205,7 +210,7 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
 <p><em class='docparam'>@author</em> José Nahuel Cuesta Luengo <a href="&#x6d;&#x61;&#105;&#108;&#116;&#x6f;&#x3a;&#x6e;&#97;&#104;u&#x65;&#x6c;&#99;&#117;&#101;&#x73;&#x74;&#x61;&#108;&#117;e&#x6e;&#x67;&#111;&#64;&#103;&#x6d;&#x61;&#x69;&#108;&#46;c&#x6f;&#x6d;">&#x6e;&#97;&#104;u&#x65;&#x6c;&#99;&#117;&#101;&#x73;&#x74;&#x61;&#108;&#117;e&#x6e;&#x67;&#111;&#64;&#103;&#x6d;&#x61;&#x69;&#108;&#46;c&#x6f;&#x6d;</a></p>
             </td>
             <td class="code">
-              <div class="highlight"><pre><span class="k">class</span> <span class="nc">Command</span> <span class="k">implements</span> <span class="nx">CommandInterface</span>
+              <div class="highlight"><pre><span class="k">class</span> <span class="nc">Command</span> <span class="k">implements</span> <span class="nx">CommandInterface</span><span class="p">,</span> <span class="nx">PipingCommandInterface</span><span class="p">,</span> <span class="nx">PipeableCommandInterface</span>
 <span class="p">{</span>
     <span class="k">const</span> <span class="no">DEFAULT_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;=&#39;</span><span class="p">;</span></pre></div>            </td>
           </tr>
@@ -252,7 +257,7 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
               </div>
               <p>A command piped to this one, if any.</p>
 
-<p><em class='docparam'>@var</em> \Clinner\Command\CommandInterface</p>
+<p><em class='docparam'>@var</em> \Clinner\Command\PipeableCommandInterface</p>
             </td>
             <td class="code">
               <div class="highlight"><pre>    <span class="k">private</span> <span class="nv">$_next</span><span class="p">;</span></pre></div>            </td>
@@ -300,13 +305,80 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
             <td class="code">
               <div class="highlight"><pre>    <span class="k">static</span> <span class="k">public</span> <span class="k">function</span> <span class="nf">create</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$arguments</span> <span class="o">=</span> <span class="k">array</span><span class="p">(),</span> <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span>
     <span class="p">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nx">self</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$arguments</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="k">static</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$arguments</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
                   <tr id="section-9">
             <td class="docs">
               <div class="pilwrap">
                 <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Factory method for creating new Commands from their string representation,
+ as if they were being run from the command line. If no valid commands are
+ found, a NullCommand will be returned.
+ For example:
+ <code>
+      $command = Command::fromString('cat /etc/hosts | grep localhost');
+ </code>
+ Is roughly equivalent to:
+ <code>
+      $command = Command::create('cat', array('/etc/hosts'))
+          ->pipe(Command::create('grep', array('localhost')));
+ </code></p>
+
+<p><em class='docparam'>@param</em>  string $commandString The command string to parse.</p>
+
+<p><em class='docparam'>@return</em> \Clinner\Command\CommandInterface</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="k">static</span> <span class="k">public</span> <span class="k">function</span> <span class="nf">fromString</span><span class="p">(</span><span class="nv">$commandString</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$splitCommands</span> <span class="o">=</span> <span class="nb">array_map</span><span class="p">(</span>
+            <span class="k">function</span><span class="p">(</span><span class="nv">$str</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$str</span><span class="p">);</span> <span class="p">},</span>
+            <span class="nb">explode</span><span class="p">(</span><span class="nx">self</span><span class="o">::</span><span class="na">PIPE</span><span class="p">,</span> <span class="nv">$commandString</span><span class="p">)</span>
+        <span class="p">);</span>
+
+        <span class="nv">$command</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NullCommand</span><span class="p">();</span>
+
+        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$splitCommands</span> <span class="k">as</span> <span class="nv">$rawCommand</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$command</span> <span class="o">=</span> <span class="nv">$command</span><span class="o">-&gt;</span><span class="na">pipe</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="na">parse</span><span class="p">(</span><span class="nv">$rawCommand</span><span class="p">));</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nv">$command</span><span class="p">;</span>
+    <span class="p">}</span></pre></div>            </td>
+          </tr>
+                  <tr id="section-10">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Parse a command from a string representation and return the resulting
+ object.
+ If no valid command is found, a NullCommand will be returned.</p>
+
+<p><em class='docparam'>@param</em> string $commandString The command string to parse.
+<em class='docparam'>@param</em> array  $options       (Optional) options for the command.</p>
+
+<p><em class='docparam'>@return</em> \Clinner\Command\CommandInterface</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="k">static</span> <span class="k">protected</span> <span class="k">function</span> <span class="nf">parse</span><span class="p">(</span><span class="nv">$commandString</span><span class="p">,</span> <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="nv">$members</span> <span class="o">=</span> <span class="nb">array_filter</span><span class="p">(</span><span class="nb">explode</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="nv">$commandString</span><span class="p">));</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">empty</span><span class="p">(</span><span class="nv">$members</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nv">$commandName</span> <span class="o">=</span> <span class="nb">array_shift</span><span class="p">(</span><span class="nv">$members</span><span class="p">);</span>
+
+            <span class="k">return</span> <span class="k">new</span> <span class="nx">Command</span><span class="p">(</span><span class="nv">$commandName</span><span class="p">,</span> <span class="nv">$members</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">NullCommand</span><span class="p">();</span>
+    <span class="p">}</span></pre></div>            </td>
+          </tr>
+                  <tr id="section-11">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>Constructor.</p>
 
@@ -323,10 +395,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
             <span class="o">-&gt;</span><span class="na">setOptions</span><span class="p">(</span><span class="nv">$options</span><span class="p">);</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
-                  <tr id="section-10">
+                  <tr id="section-12">
             <td class="docs">
               <div class="pilwrap">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>Get the name of this command.</p>
 
@@ -338,10 +410,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_name</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
-                  <tr id="section-11">
+                  <tr id="section-13">
             <td class="docs">
               <div class="pilwrap">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>Set the name of this command to $name.</p>
 
@@ -357,10 +429,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
-                  <tr id="section-12">
+                  <tr id="section-14">
             <td class="docs">
               <div class="pilwrap">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Get the arguments for this command as a ValueHolder.</p>
 
@@ -372,10 +444,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_arguments</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
-                  <tr id="section-13">
+                  <tr id="section-15">
             <td class="docs">
               <div class="pilwrap">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Set this command's arguments as a whole.
  $arguments might either be an array or a ValueHolder.</p>
@@ -394,10 +466,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
-                  <tr id="section-14">
+                  <tr id="section-16">
             <td class="docs">
               <div class="pilwrap">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>Get the options for this command as a ValueHolder.</p>
 
@@ -409,10 +481,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_options</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
-                  <tr id="section-15">
+                  <tr id="section-17">
             <td class="docs">
               <div class="pilwrap">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Set this command's options as a whole.
  $options might either be an array or a ValueHolder.</p>
@@ -431,10 +503,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
-                  <tr id="section-16">
+                  <tr id="section-18">
             <td class="docs">
               <div class="pilwrap">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>Get a single option value for this command, optionally providing a default value
  for it.</p>
@@ -452,10 +524,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_options</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$default</span><span class="p">);</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
-                  <tr id="section-17">
+                  <tr id="section-19">
             <td class="docs">
               <div class="pilwrap">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>Set a single option for this command.</p>
 
@@ -472,14 +544,14 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
-                  <tr id="section-18">
+                  <tr id="section-20">
             <td class="docs">
               <div class="pilwrap">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>Get the command piped to this one, if any.</p>
 
-<p><em class='docparam'>@return</em> \Clinner\Command\CommandInterface</p>
+<p><em class='docparam'>@return</em> \Clinner\Command\PipeableCommandInterface</p>
             </td>
             <td class="code">
               <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">getPipedCommand</span><span class="p">()</span>
@@ -487,68 +559,70 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_next</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
-                  <tr id="section-19">
-            <td class="docs">
-              <div class="pilwrap">
-                <a class="pilcrow" href="#section-19">&#182;</a>
-              </div>
-              <p>Pipe $anotherCommand to this one, so that this command's output
- is directly sent to $anotherCommand's standard input.</p>
-
-<p><em class='docparam'>@param</em>  \Clinner\Command\CommandInterface $anotherCommand The command to pipe.
-<em class='docparam'>@param</em>  bool                              $appendToPipe   Whether $anotherCommand will be appended to
-                                                           the currently piped commands (TRUE) or if it
-                                                           will be added after this command, rearranging
-                                                           the commands pipe to include it.</p>
-
-<p><em class='docparam'>@return</em> \Clinner\Command\Command This instance, for a fluent API.</p>
-            </td>
-            <td class="code">
-              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">pipe</span><span class="p">(</span><span class="nv">$anotherCommand</span><span class="p">,</span> <span class="nv">$appendToPipe</span> <span class="o">=</span> <span class="k">true</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span> <span class="o">===</span> <span class="nv">$anotherCommand</span><span class="p">)</span> <span class="p">{</span></pre></div>            </td>
-          </tr>
-                  <tr id="section-20">
-            <td class="docs">
-              <div class="pilwrap">
-                <a class="pilcrow" href="#section-20">&#182;</a>
-              </div>
-              <p>Cannot pipe a command to itself, need to clone it</p>
-            </td>
-            <td class="code">
-              <div class="highlight"><pre>            <span class="nv">$anotherCommand</span> <span class="o">=</span> <span class="k">clone</span> <span class="nv">$anotherCommand</span><span class="p">;</span>
-        <span class="p">}</span>
-        
-        <span class="k">if</span> <span class="p">(</span><span class="nv">$appendToPipe</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">hasPipedCommand</span><span class="p">())</span> <span class="p">{</span>
-                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_next</span><span class="o">-&gt;</span><span class="na">pipe</span><span class="p">(</span><span class="nv">$anotherCommand</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_next</span> <span class="o">=</span> <span class="nv">$anotherCommand</span><span class="p">;</span>
-            <span class="p">}</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">hasPipedCommand</span><span class="p">())</span> <span class="p">{</span></pre></div>            </td>
-          </tr>
                   <tr id="section-21">
             <td class="docs">
               <div class="pilwrap">
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              <p>Rearrange the commands pipe</p>
+              <p>Pipe $anotherCommand to this one, so that this command's output is directly
+ sent to $anotherCommand's standard input.</p>
+
+<p><em class='docparam'>@param</em>  \Clinner\Command\PipeableCommandInterface $anotherCommand The command to pipe.
+<em class='docparam'>@param</em>  bool                                      $appendToPipe   Whether $anotherCommand will be appended to
+                                                                   the currently piped commands (TRUE) or if it
+                                                                   will be added after this command, rearranging
+                                                                   the commands pipe to include it.</p>
+
+<p><em class='docparam'>@return</em> \Clinner\Command\PipingCommandInterface This instance, for a fluent API.</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre>                <span class="nv">$anotherCommand</span><span class="o">-&gt;</span><span class="na">pipe</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_next</span><span class="p">,</span> <span class="k">false</span><span class="p">);</span>
-            <span class="p">}</span>
-            
-            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_next</span> <span class="o">=</span> <span class="nv">$anotherCommand</span><span class="p">;</span>
-        <span class="p">}</span>
-
-        <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
-    <span class="p">}</span></pre></div>            </td>
+              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">pipe</span><span class="p">(</span><span class="nx">PipeableCommandInterface</span> <span class="nv">$anotherCommand</span><span class="p">,</span> <span class="nv">$appendToPipe</span> <span class="o">=</span> <span class="k">true</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$anotherCommand</span> <span class="nx">instanceof</span> <span class="nx">NullCommand</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span> <span class="o">===</span> <span class="nv">$anotherCommand</span><span class="p">)</span> <span class="p">{</span></pre></div>            </td>
           </tr>
                   <tr id="section-22">
             <td class="docs">
               <div class="pilwrap">
                 <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>Cannot pipe a command to itself, need to clone it</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>                <span class="nv">$anotherCommand</span> <span class="o">=</span> <span class="k">clone</span> <span class="nv">$anotherCommand</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nv">$appendToPipe</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">hasPipedCommand</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_next</span><span class="o">-&gt;</span><span class="na">pipe</span><span class="p">(</span><span class="nv">$anotherCommand</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_next</span> <span class="o">=</span> <span class="nv">$anotherCommand</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">hasPipedCommand</span><span class="p">())</span> <span class="p">{</span></pre></div>            </td>
+          </tr>
+                  <tr id="section-23">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>Rearrange the commands pipe</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>                    <span class="nv">$anotherCommand</span><span class="o">-&gt;</span><span class="na">pipe</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_next</span><span class="p">,</span> <span class="k">false</span><span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_next</span> <span class="o">=</span> <span class="nv">$anotherCommand</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
+    <span class="p">}</span></pre></div>            </td>
+          </tr>
+                  <tr id="section-24">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>Answer whether this command has a command piped to it.</p>
 
@@ -560,10 +634,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="k">return</span> <span class="k">null</span> <span class="o">!==</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_next</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
-                  <tr id="section-23">
+                  <tr id="section-25">
             <td class="docs">
               <div class="pilwrap">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>Get the exit code for this command.</p>
 
@@ -575,10 +649,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_exitCode</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
-                  <tr id="section-24">
+                  <tr id="section-26">
             <td class="docs">
               <div class="pilwrap">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>Get this command's output.</p>
 
@@ -590,10 +664,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_output</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
-                  <tr id="section-25">
+                  <tr id="section-27">
             <td class="docs">
               <div class="pilwrap">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>Get the output of this command as an array, splitting it with a given $delimiter.
  If no output has been generated by this command, an empty array will be returned.</p>
@@ -614,10 +688,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="k">return</span> <span class="k">array</span><span class="p">();</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
-                  <tr id="section-26">
+                  <tr id="section-28">
             <td class="docs">
               <div class="pilwrap">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>Run this command with the given $input.
  If this command has any other command piped to it, the other command
@@ -635,10 +709,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
-                  <tr id="section-27">
+                  <tr id="section-29">
             <td class="docs">
               <div class="pilwrap">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Actually run this command and its piped commands chain, if applicable.
  Return the exit code for such execution.</p>
@@ -676,10 +750,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
 
         <span class="nv">$exitCode</span> <span class="o">=</span> <span class="nb">proc_close</span><span class="p">(</span><span class="nv">$childProcess</span><span class="p">);</span></pre></div>            </td>
           </tr>
-                  <tr id="section-28">
+                  <tr id="section-30">
             <td class="docs">
               <div class="pilwrap">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>Run the piped command, if any</p>
             </td>
@@ -698,10 +772,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="k">return</span> <span class="nv">$exitCode</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
-                  <tr id="section-29">
+                  <tr id="section-31">
             <td class="docs">
               <div class="pilwrap">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>Get a string representation of this command with its arguments,
  as if it would be written in a command-line interface when run.</p>
@@ -734,16 +808,16 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nv">$includePiped</span> <span class="o">&amp;&amp;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">hasPipedCommand</span><span class="p">())</span> <span class="p">{</span>
-            <span class="nv">$command</span> <span class="o">.=</span> <span class="s1">&#39; | &#39;</span> <span class="o">.</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getPipedCommand</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">toCommandString</span><span class="p">(</span><span class="nv">$includePiped</span><span class="p">);</span>
+            <span class="nv">$command</span> <span class="o">.=</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">&#39; %s %s&#39;</span><span class="p">,</span> <span class="nx">self</span><span class="o">::</span><span class="na">PIPE</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getPipedCommand</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">toCommandString</span><span class="p">(</span><span class="nv">$includePiped</span><span class="p">));</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="nv">$command</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
-                  <tr id="section-30">
+                  <tr id="section-32">
             <td class="docs">
               <div class="pilwrap">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>Get the string representation of this command.</p>
 

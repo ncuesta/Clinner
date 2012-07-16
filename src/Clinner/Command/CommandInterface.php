@@ -45,15 +45,9 @@ interface CommandInterface
     public function getOutput();
     
     /**
-     * Get a string represnting this command.
-     * If $includePiped is TRUE, this method must include any command(s) piped after
-     * the instance in which it was called.
-     *
-     * @param  bool $includePiped (Optional) indicates whether the resulting
-     *                            string will include any piped command to this
-     *                            one. Defaults to FALSE.
+     * Get a string representing this command.
      *
      * @return string
      */
-    public function toCommandString($includePiped = false);
+    public function toCommandString();
 }

@@ -104,6 +104,12 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
                               Command.php              </a>
                                         <a class="source" href="../../Clinner/Command/CommandInterface.html">
                               CommandInterface.php              </a>
+                                        <a class="source" href="../../Clinner/Command/NullCommand.html">
+                              NullCommand.php              </a>
+                                        <a class="source" href="../../Clinner/Command/PipeableCommandInterface.html">
+                              PipeableCommandInterface.php              </a>
+                                        <a class="source" href="../../Clinner/Command/PipingCommandInterface.html">
+                              PipingCommandInterface.php              </a>
                                         <a class="source" href="../../Clinner/ValueHolder.html">
                               ValueHolder.php              </a>
                       </div>
@@ -134,9 +140,7 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
  file that was distributed with this source code.</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre><span class="k">namespace</span> <span class="nx">Clinner\Command</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Clinner\Command\CommandInterface</span><span class="p">;</span></pre></div>            </td>
+              <div class="highlight"><pre><span class="k">namespace</span> <span class="nx">Clinner\Command</span><span class="p">;</span></pre></div>            </td>
           </tr>
                   <tr id="section-1">
             <td class="docs">
@@ -176,7 +180,7 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
 <p><em class='docparam'>@author</em> José Nahuel Cuesta Luengo <a href="&#x6d;&#x61;&#105;&#108;&#116;&#x6f;&#x3a;&#x6e;&#97;&#104;u&#x65;&#x6c;&#99;&#117;&#101;&#x73;&#x74;&#x61;&#108;&#117;e&#x6e;&#x67;&#111;&#64;&#103;&#x6d;&#x61;&#x69;&#108;&#46;c&#x6f;&#x6d;">&#x6e;&#97;&#104;u&#x65;&#x6c;&#99;&#117;&#101;&#x73;&#x74;&#x61;&#108;&#117;e&#x6e;&#x67;&#111;&#64;&#103;&#x6d;&#x61;&#x69;&#108;&#46;c&#x6f;&#x6d;</a></p>
             </td>
             <td class="code">
-              <div class="highlight"><pre><span class="k">class</span> <span class="nc">Callback</span> <span class="k">implements</span> <span class="nx">CommandInterface</span>
+              <div class="highlight"><pre><span class="k">class</span> <span class="nc">Callback</span> <span class="k">implements</span> <span class="nx">CommandInterface</span><span class="p">,</span> <span class="nx">PipeableCommandInterface</span>
 <span class="p">{</span></pre></div>            </td>
           </tr>
                   <tr id="section-2">
@@ -376,14 +380,10 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
               <p>Get a string representation of this command with its arguments,
  as if it would be written in a command-line interface when run.</p>
 
-<p><em class='docparam'>@param</em>  bool $includePiped (Optional) indicates whether the resulting
-                            string will include any piped command to this
-                            one. Defaults to FALSE.</p>
-
 <p><em class='docparam'>@return</em> string</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">toCommandString</span><span class="p">(</span><span class="nv">$includePiped</span> <span class="o">=</span> <span class="k">false</span><span class="p">)</span>
+              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">toCommandString</span><span class="p">()</span>
     <span class="p">{</span>
         <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getCallbackCode</span><span class="p">();</span>
     <span class="p">}</span>

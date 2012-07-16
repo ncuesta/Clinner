@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>CommandInterface.php</title>
+  <title>PipeableCommandInterface.php</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <link rel="stylesheet" media="all" href="layout.css" />
   <style>
@@ -120,7 +120,7 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <tr>
           <th class="docs">
             <h1>
-              CommandInterface.php            </h1>
+              PipeableCommandInterface.php            </h1>
           </th>
           <th class="code">
           </th>
@@ -147,66 +147,14 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
               <div class="pilwrap">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <p>Command Interface
- Interface to be implemented by Commands.</p>
+              <p>PipeableCommandInterface
+ Interface to be implemented by commands that can be piped to other commands.</p>
 
 <p><em class='docparam'>@author</em> José Nahuel Cuesta Luengo <a href="&#x6d;&#x61;&#105;&#108;&#116;&#x6f;&#x3a;&#x6e;&#97;&#104;u&#x65;&#x6c;&#99;&#117;&#101;&#x73;&#x74;&#x61;&#108;&#117;e&#x6e;&#x67;&#111;&#64;&#103;&#x6d;&#x61;&#x69;&#108;&#46;c&#x6f;&#x6d;">&#x6e;&#97;&#104;u&#x65;&#x6c;&#99;&#117;&#101;&#x73;&#x74;&#x61;&#108;&#117;e&#x6e;&#x67;&#111;&#64;&#103;&#x6d;&#x61;&#x69;&#108;&#46;c&#x6f;&#x6d;</a></p>
             </td>
             <td class="code">
-              <div class="highlight"><pre><span class="k">interface</span> <span class="nx">CommandInterface</span>
-<span class="p">{</span></pre></div>            </td>
-          </tr>
-                  <tr id="section-2">
-            <td class="docs">
-              <div class="pilwrap">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p>Run this command and get the exit code for it.</p>
-
-<p><em class='docparam'>@param</em> string $input (Optional) input string for this command.</p>
-
-<p><em class='docparam'>@return</em> \Clinner\Command\CommandInterface This command, for a fluent API.</p>
-            </td>
-            <td class="code">
-              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">run</span><span class="p">(</span><span class="nv">$input</span> <span class="o">=</span> <span class="k">null</span><span class="p">);</span></pre></div>            </td>
-          </tr>
-                  <tr id="section-3">
-            <td class="docs">
-              <div class="pilwrap">
-                <a class="pilcrow" href="#section-3">&#182;</a>
-              </div>
-              <p>Get the exit code for this command's execution.
- This method will only return a valid value after the command has been executed.</p>
-
-<p><em class='docparam'>@return</em> int</p>
-            </td>
-            <td class="code">
-              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">getExitCode</span><span class="p">();</span></pre></div>            </td>
-          </tr>
-                  <tr id="section-4">
-            <td class="docs">
-              <div class="pilwrap">
-                <a class="pilcrow" href="#section-4">&#182;</a>
-              </div>
-              <p>Get the output for this command's execution.
- This method will only return a valid value after the command has been executed.</p>
-
-<p><em class='docparam'>@return</em> string</p>
-            </td>
-            <td class="code">
-              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">getOutput</span><span class="p">();</span></pre></div>            </td>
-          </tr>
-                  <tr id="section-5">
-            <td class="docs">
-              <div class="pilwrap">
-                <a class="pilcrow" href="#section-5">&#182;</a>
-              </div>
-              <p>Get a string representing this command.</p>
-
-<p><em class='docparam'>@return</em> string</p>
-            </td>
-            <td class="code">
-              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">toCommandString</span><span class="p">();</span>
+              <div class="highlight"><pre><span class="k">interface</span> <span class="nx">PipeableCommandInterface</span>
+<span class="p">{</span>
 <span class="p">}</span>
 </pre></div></pre></div>            </td>
           </tr>

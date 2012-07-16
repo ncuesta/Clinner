@@ -11,8 +11,6 @@
 
 namespace Clinner\Command;
 
-use Clinner\Command\CommandInterface;
-
 
 /**
  * Callback class.
@@ -47,7 +45,7 @@ use Clinner\Command\CommandInterface;
  *
  * @author José Nahuel Cuesta Luengo <nahuelcuestaluengo@gmail.com>
  */
-class Callback implements CommandInterface
+class Callback implements CommandInterface, PipeableCommandInterface
 {
     /**
      * Exit code for this command.
@@ -178,13 +176,9 @@ class Callback implements CommandInterface
      * Get a string representation of this command with its arguments,
      * as if it would be written in a command-line interface when run.
      *
-     * @param  bool $includePiped (Optional) indicates whether the resulting
-     *                            string will include any piped command to this
-     *                            one. Defaults to FALSE.
-     *
      * @return string
      */
-    public function toCommandString($includePiped = false)
+    public function toCommandString()
     {
         return $this->getCallbackCode();
     }

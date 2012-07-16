@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>ValueHolder.php</title>
+  <title>NullCommand.php</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <link rel="stylesheet" media="all" href="layout.css" />
   <style>
@@ -98,19 +98,19 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         Jump To &hellip;
         <div id="jump_wrapper">
           <div id="jump_page">
-                                        <a class="source" href="../Clinner/Command/Callback.html">
+                                        <a class="source" href="../../Clinner/Command/Callback.html">
                               Callback.php              </a>
-                                        <a class="source" href="../Clinner/Command/Command.html">
+                                        <a class="source" href="../../Clinner/Command/Command.html">
                               Command.php              </a>
-                                        <a class="source" href="../Clinner/Command/CommandInterface.html">
+                                        <a class="source" href="../../Clinner/Command/CommandInterface.html">
                               CommandInterface.php              </a>
-                                        <a class="source" href="../Clinner/Command/NullCommand.html">
+                                        <a class="source" href="../../Clinner/Command/NullCommand.html">
                               NullCommand.php              </a>
-                                        <a class="source" href="../Clinner/Command/PipeableCommandInterface.html">
+                                        <a class="source" href="../../Clinner/Command/PipeableCommandInterface.html">
                               PipeableCommandInterface.php              </a>
-                                        <a class="source" href="../Clinner/Command/PipingCommandInterface.html">
+                                        <a class="source" href="../../Clinner/Command/PipingCommandInterface.html">
                               PipingCommandInterface.php              </a>
-                                        <a class="source" href="../Clinner/ValueHolder.html">
+                                        <a class="source" href="../../Clinner/ValueHolder.html">
                               ValueHolder.php              </a>
                       </div>
         </div>
@@ -120,7 +120,7 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
         <tr>
           <th class="docs">
             <h1>
-              ValueHolder.php            </h1>
+              NullCommand.php            </h1>
           </th>
           <th class="code">
           </th>
@@ -140,21 +140,20 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
  file that was distributed with this source code.</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre><span class="k">namespace</span> <span class="nx">Clinner</span><span class="p">;</span></pre></div>            </td>
+              <div class="highlight"><pre><span class="k">namespace</span> <span class="nx">Clinner\Command</span><span class="p">;</span></pre></div>            </td>
           </tr>
                   <tr id="section-1">
             <td class="docs">
               <div class="pilwrap">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <p>ValueHolder
- Value holder for any kind of array-like store that needs to have
- accessors with an optional default value for undefined values.</p>
+              <p>NullCommand class.
+ This class represents a null command (Null Object pattern implementation).</p>
 
 <p><em class='docparam'>@author</em> José Nahuel Cuesta Luengo <a href="&#x6d;&#x61;&#105;&#108;&#116;&#x6f;&#x3a;&#x6e;&#97;&#104;u&#x65;&#x6c;&#99;&#117;&#101;&#x73;&#x74;&#x61;&#108;&#117;e&#x6e;&#x67;&#111;&#64;&#103;&#x6d;&#x61;&#x69;&#108;&#46;c&#x6f;&#x6d;">&#x6e;&#97;&#104;u&#x65;&#x6c;&#99;&#117;&#101;&#x73;&#x74;&#x61;&#108;&#117;e&#x6e;&#x67;&#111;&#64;&#103;&#x6d;&#x61;&#x69;&#108;&#46;c&#x6f;&#x6d;</a></p>
             </td>
             <td class="code">
-              <div class="highlight"><pre><span class="k">class</span> <span class="nc">ValueHolder</span>
+              <div class="highlight"><pre><span class="k">class</span> <span class="nc">NullCommand</span> <span class="k">implements</span> <span class="nx">CommandInterface</span><span class="p">,</span> <span class="nx">PipingCommandInterface</span><span class="p">,</span> <span class="nx">PipeableCommandInterface</span>
 <span class="p">{</span></pre></div>            </td>
           </tr>
                   <tr id="section-2">
@@ -162,34 +161,25 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
               <div class="pilwrap">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>Values in this holder.</p>
+              <p>Run this command and get the exit code for it.</p>
 
-<p><em class='docparam'>@var</em> array</p>
+<p><em class='docparam'>@param</em> string $input (Optional) input string for this command.</p>
+
+<p><em class='docparam'>@return</em> \Clinner\Command\CommandInterface This command, for a fluent API.</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre>    <span class="k">private</span> <span class="nv">$_values</span><span class="p">;</span></pre></div>            </td>
+              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">run</span><span class="p">(</span><span class="nv">$input</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+    <span class="p">{</span></pre></div>            </td>
           </tr>
                   <tr id="section-3">
             <td class="docs">
               <div class="pilwrap">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Create a new instance of ValueHolder with an optional initial set of values.
- $initial might either be an array or another instance of ValueHolder, in which
- case it will be returned as is.</p>
-
-<p><em class='docparam'>@param</em> array|\Clinner\ValueHolder $initial (Optional) initial set of values.</p>
-
-<p><em class='docparam'>@return</em> \Clinner\ValueHolder</p>
+              <p>Do nothing</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre>    <span class="k">static</span> <span class="k">public</span> <span class="k">function</span> <span class="nf">create</span><span class="p">(</span><span class="nv">$initial</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span>
-    <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nv">$initial</span> <span class="nx">instanceof</span> <span class="nx">self</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nv">$initial</span><span class="p">;</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">new</span> <span class="nx">self</span><span class="p">(</span><span class="nv">$initial</span><span class="p">);</span>
-        <span class="p">}</span>
+              <div class="highlight"><pre>        <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
                   <tr id="section-4">
@@ -197,28 +187,24 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
               <div class="pilwrap">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Constructor</p>
+              <p>Get the exit code for this command's execution.
+ This method will only return a valid value after the command has been executed.</p>
 
-<p><em class='docparam'>@param</em> array $initial (Optional) initial values for the ValueHolder.</p>
+<p><em class='docparam'>@return</em> int</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="k">array</span> <span class="nv">$initial</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_values</span> <span class="o">=</span> <span class="nv">$initial</span><span class="p">;</span>
-    <span class="p">}</span></pre></div>            </td>
+              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">getExitCode</span><span class="p">()</span>
+    <span class="p">{</span></pre></div>            </td>
           </tr>
                   <tr id="section-5">
             <td class="docs">
               <div class="pilwrap">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Overridden in order to allow atribute-like accessor for values in the
- ValueHolder.</p>
+              <p>Null commands are always successful, aren't they?</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">__get</span><span class="p">(</span><span class="nv">$name</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="nv">$name</span><span class="p">);</span>
+              <div class="highlight"><pre>        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
                   <tr id="section-6">
@@ -226,13 +212,15 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
               <div class="pilwrap">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Overridden in order to allow atribute-like setter for values in the
- ValueHolder.</p>
+              <p>Get the output for this command's execution.
+ This method will only return a valid value after the command has been executed.</p>
+
+<p><em class='docparam'>@return</em> string</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">__set</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$value</span><span class="p">)</span>
+              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">getOutput</span><span class="p">()</span>
     <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$value</span><span class="p">);</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
                   <tr id="section-7">
@@ -240,22 +228,14 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
               <div class="pilwrap">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>Get the value stored under key $name if it's set - otherwise return
- $default.</p>
+              <p>Get a string representing this command.</p>
 
-<p><em class='docparam'>@param</em>  string $name    The key name for the desired value.
-<em class='docparam'>@param</em>  mixed  $default (Optional) a default value to return if $name is not set.</p>
-
-<p><em class='docparam'>@return</em> mixed</p>
+<p><em class='docparam'>@return</em> string</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">get</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$default</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">toCommandString</span><span class="p">()</span>
     <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">array_key_exists</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_values</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_values</span><span class="p">[</span><span class="nv">$name</span><span class="p">];</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nv">$default</span><span class="p">;</span>
-        <span class="p">}</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
                   <tr id="section-8">
@@ -263,19 +243,14 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
               <div class="pilwrap">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>Set and store a value under key $name to $value.</p>
+              <p>Get the command piped to this one, if any.</p>
 
-<p><em class='docparam'>@param</em>  string $name  The key name for the value to set.
-<em class='docparam'>@param</em>  mixed  $value The value to set under key $name.</p>
-
-<p><em class='docparam'>@return</em> ValueHolder This instance, for a fluent API.</p>
+<p><em class='docparam'>@return</em> \Clinner\Command\PipeableCommandInterface</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">set</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$value</span><span class="p">)</span>
+              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">getPipedCommand</span><span class="p">()</span>
     <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_values</span><span class="p">[</span><span class="nv">$name</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$value</span><span class="p">;</span>
-        
-        <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">null</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
                   <tr id="section-9">
@@ -283,51 +258,40 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
               <div class="pilwrap">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Reset this ValueHolder's values, clearing any of them.</p>
+              <p>Pipe $anotherCommand to this one, so that this command's output is directly
+ sent to $anotherCommand's standard input.</p>
 
-<p><em class='docparam'>@return</em> ValueHolder This instance, for a fluent API.</p>
+<p><em class='docparam'>@param</em>  \Clinner\Command\PipeableCommandInterface $anotherCommand The command to pipe.
+<em class='docparam'>@param</em>  bool                                      $appendToPipe   Whether $anotherCommand will be appended to
+                                                                   the currently piped commands (TRUE) or if it
+                                                                   will be added after this command, rearranging
+                                                                   the commands pipe to include it.</p>
+
+<p><em class='docparam'>@return</em> \Clinner\Command\PipingCommandInterface This instance, for a fluent API.</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">reset</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_values</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
-        
-        <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
-    <span class="p">}</span></pre></div>            </td>
+              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">pipe</span><span class="p">(</span><span class="nx">PipeableCommandInterface</span> <span class="nv">$anotherCommand</span><span class="p">,</span> <span class="nv">$appendToPipe</span> <span class="o">=</span> <span class="k">true</span><span class="p">)</span>
+    <span class="p">{</span></pre></div>            </td>
           </tr>
                   <tr id="section-10">
             <td class="docs">
               <div class="pilwrap">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>Set all the values stored in this ValueHolder to $values,
- destroying any previously-set ones.</p>
-
-<p><em class='docparam'>@param</em>  array $values The new values to set.</p>
-
-<p><em class='docparam'>@return</em> ValueHolder This instance, for a fluent API.</p>
+              <p>The trick here is to return $anotherCommand directly</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">setAll</span><span class="p">(</span><span class="k">array</span> <span class="nv">$values</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_values</span> <span class="o">=</span> <span class="nv">$values</span><span class="p">;</span>
-        
-        <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
-    <span class="p">}</span></pre></div>            </td>
+              <div class="highlight"><pre></pre></div>            </td>
           </tr>
                   <tr id="section-11">
             <td class="docs">
               <div class="pilwrap">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>Get all the values stored in this ValueHolder as an array.</p>
-
-<p><em class='docparam'>@return</em> array</p>
+              <p>instead of this command</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">getAll</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_values</span><span class="p">;</span>
+              <div class="highlight"><pre>        <span class="k">return</span> <span class="nv">$anotherCommand</span><span class="p">;</span>
     <span class="p">}</span></pre></div>            </td>
           </tr>
                   <tr id="section-12">
@@ -335,29 +299,14 @@ td.docs .docparam {color:#DB251A;font-weight:bold;}
               <div class="pilwrap">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>Get the number of arguments set to this ValueHolder.</p>
-
-<p><em class='docparam'>@return</em> int</p>
-            </td>
-            <td class="code">
-              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">count</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_values</span><span class="p">);</span>
-    <span class="p">}</span></pre></div>            </td>
-          </tr>
-                  <tr id="section-13">
-            <td class="docs">
-              <div class="pilwrap">
-                <a class="pilcrow" href="#section-13">&#182;</a>
-              </div>
-              <p>Answer whether this ValueHolder is empty.</p>
+              <p>Answer whether this command has a command piped to it.</p>
 
 <p><em class='docparam'>@return</em> bool</p>
             </td>
             <td class="code">
-              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">isEmpty</span><span class="p">()</span>
+              <div class="highlight"><pre>    <span class="k">public</span> <span class="k">function</span> <span class="nf">hasPipedCommand</span><span class="p">()</span>
     <span class="p">{</span>
-        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">()</span> <span class="o">===</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div></pre></div>            </td>

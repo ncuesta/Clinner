@@ -11,7 +11,6 @@
 
 namespace Clinner\Command;
 
-use Clinner\Command\CommandInterface;
 use Clinner\ValueHolder;
 
 
@@ -72,7 +71,7 @@ use Clinner\ValueHolder;
  *
  * @author José Nahuel Cuesta Luengo <nahuelcuestaluengo@gmail.com>
  */
-class Command implements CommandInterface
+class Command implements CommandInterface, PipingCommandInterface, PipeableCommandInterface
 {
     const DEFAULT_DELIMITER = '=';
 
@@ -100,7 +99,7 @@ class Command implements CommandInterface
     /**
      * A command piped to this one, if any.
      *
-     * @var \Clinner\Command\CommandInterface
+     * @var \Clinner\Command\PipeableCommandInterface
      */
     private $_next;
 
@@ -132,7 +131,64 @@ class Command implements CommandInterface
      */
     static public function create($name, $arguments = array(), $options = array())
     {
-        return new self($name, $arguments, $options);
+        return new static($name, $arguments, $options);
+    }
+
+    /**
+     * Factory method for creating new Commands from their string representation,
+     * as if they were being run from the command line. If no valid commands are
+     * found, a NullCommand will be returned.
+     * For example:
+     * <code>
+     *      $command = Command::fromString('cat /etc/hosts | grep localhost');
+     * </code>
+     * Is roughly equivalent to:
+     * <code>
+     *      $command = Command::create('cat', array('/etc/hosts'))
+     *          ->pipe(Command::create('grep', array('localhost')));
+     * </code>
+     *
+     * @param  string $commandString The command string to parse.
+     *
+     * @return \Clinner\Command\CommandInterface
+     */
+    static public function fromString($commandString)
+    {
+        $splitCommands = array_map(
+            function($str) { return trim($str); },
+            explode(self::PIPE, $commandString)
+        );
+
+        $command = new NullCommand();
+
+        foreach ($splitCommands as $rawCommand) {
+            $command = $command->pipe(static::parse($rawCommand));
+        }
+
+        return $command;
+    }
+
+    /**
+     * Parse a command from a string representation and return the resulting
+     * object.
+     * If no valid command is found, a NullCommand will be returned.
+     *
+     * @param string $commandString The command string to parse.
+     * @param array  $options       (Optional) options for the command.
+     *
+     * @return \Clinner\Command\CommandInterface
+     */
+    static protected function parse($commandString, $options = array())
+    {
+        $members = array_filter(explode(' ', $commandString));
+
+        if (!empty($members)) {
+            $commandName = array_shift($members);
+
+            return new Command($commandName, $members, $options);
+        }
+
+        return new NullCommand();
     }
 
     /**
@@ -262,7 +318,7 @@ class Command implements CommandInterface
     /**
      * Get the command piped to this one, if any.
      *
-     * @return \Clinner\Command\CommandInterface
+     * @return \Clinner\Command\PipeableCommandInterface
      */
     public function getPipedCommand()
     {
@@ -270,37 +326,39 @@ class Command implements CommandInterface
     }
 
     /**
-     * Pipe $anotherCommand to this one, so that this command's output
-     * is directly sent to $anotherCommand's standard input.
+     * Pipe $anotherCommand to this one, so that this command's output is directly
+     * sent to $anotherCommand's standard input.
      *
-     * @param  \Clinner\Command\CommandInterface $anotherCommand The command to pipe.
-     * @param  bool                              $appendToPipe   Whether $anotherCommand will be appended to
-     *                                                           the currently piped commands (TRUE) or if it
-     *                                                           will be added after this command, rearranging
-     *                                                           the commands pipe to include it.
+     * @param  \Clinner\Command\PipeableCommandInterface $anotherCommand The command to pipe.
+     * @param  bool                                      $appendToPipe   Whether $anotherCommand will be appended to
+     *                                                                   the currently piped commands (TRUE) or if it
+     *                                                                   will be added after this command, rearranging
+     *                                                                   the commands pipe to include it.
      *
-     * @return \Clinner\Command\Command This instance, for a fluent API.
+     * @return \Clinner\Command\PipingCommandInterface This instance, for a fluent API.
      */
-    public function pipe($anotherCommand, $appendToPipe = true)
+    public function pipe(PipeableCommandInterface $anotherCommand, $appendToPipe = true)
     {
-        if ($this === $anotherCommand) {
-            // Cannot pipe a command to itself, need to clone it
-            $anotherCommand = clone $anotherCommand;
-        }
-        
-        if ($appendToPipe) {
-            if ($this->hasPipedCommand()) {
-                $this->_next->pipe($anotherCommand, true);
+        if (!$anotherCommand instanceof NullCommand) {
+            if ($this === $anotherCommand) {
+                // Cannot pipe a command to itself, need to clone it
+                $anotherCommand = clone $anotherCommand;
+            }
+
+            if ($appendToPipe) {
+                if ($this->hasPipedCommand()) {
+                    $this->_next->pipe($anotherCommand, true);
+                } else {
+                    $this->_next = $anotherCommand;
+                }
             } else {
+                if ($this->hasPipedCommand()) {
+                    // Rearrange the commands pipe
+                    $anotherCommand->pipe($this->_next, false);
+                }
+
                 $this->_next = $anotherCommand;
             }
-        } else {
-            if ($this->hasPipedCommand()) {
-                // Rearrange the commands pipe
-                $anotherCommand->pipe($this->_next, false);
-            }
-            
-            $this->_next = $anotherCommand;
         }
 
         return $this;
@@ -453,7 +511,7 @@ class Command implements CommandInterface
         }
 
         if ($includePiped && $this->hasPipedCommand()) {
-            $command .= ' | ' . $this->getPipedCommand()->toCommandString($includePiped);
+            $command .= sprintf(' %s %s', self::PIPE, $this->getPipedCommand()->toCommandString($includePiped));
         }
 
         return $command;
