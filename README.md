@@ -35,11 +35,11 @@ The most basic use of `Clinner` consists of installing it as a dependency via Co
     }
 ```
 
-2. Include the `autoload.php` file on your code:  
+2. Include Composer's `autoload.php` file on your code:
 ```php
     <?php
     
-        require_once 'phar://clinner.phar/autoload.php';
+        require_once __DIR__ . '/vendor/autoload.php';
 ```
 
 3. Start using commands *right away*!  
@@ -48,7 +48,7 @@ The most basic use of `Clinner` consists of installing it as a dependency via Co
     <?php
 
         // List current working directory's files and store the list as a string
-        require_once 'phar://clinner.phar/autoload.php';
+        require_once __DIR__ . '/vendor/autoload.php';
     
         $command = new \Clinner\Command\Command('ls');
         $files = $command
