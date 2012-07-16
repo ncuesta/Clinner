@@ -29,7 +29,8 @@ and then including Composer's `autoloader.php` in your code:
 1. Create (if needed) a `composer.json` file or add an entry to your existing one:  
 ```json
     {
-        # ...Your nifty project's information...
+        "name": "my/nifty-project",
+
         "require": {
             "ncuesta/clinner": "dev-master"
         }
