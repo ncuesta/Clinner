@@ -14,7 +14,7 @@
     ],
     "require": {
         "php": ">=5.3",
-        "symfony/class-loader": "2.1.*"
+        "symfony/class-loader": "2.1.*-dev"
     },
     "autoload": {
         "psr-0": { "Clinner": "src/" }
