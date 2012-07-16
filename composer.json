@@ -3,7 +3,7 @@
     "description": "Command execution abstraction",
     "keywords": ["cli", "command", "pipe", "execution"],
     "type": "library",
-    "homepage": "https://github.com/ncuesta/Clinner",
+    "homepage": "http://ncuesta.github.com/Clinner",
     "version": "0.1.2",
     "license": "MIT",
     "authors": [
