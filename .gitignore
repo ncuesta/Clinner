@@ -2,3 +2,4 @@
 tests/output
 .idea
 phpunit.xml
+vendor/*
