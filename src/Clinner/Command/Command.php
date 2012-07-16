@@ -406,11 +406,11 @@ class Command implements CommandInterface, PipingCommandInterface, PipeableComma
      */
     public function getOutputAsArray($delimiter = ' ')
     {
-        if (null !== $this->_output) {
-            return explode($delimiter, $this->_output);
-        }
-
-        return array();
+        return array_values(
+            array_filter(
+                explode($delimiter, strval($this->_output))
+            )
+        );
     }
 
     /**

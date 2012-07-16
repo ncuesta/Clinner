@@ -61,6 +61,22 @@ class CommandTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Clinner\Command\Command::fromString
+     */
+    public function testStaticFromString()
+    {
+        $this->markTestIncomplete('TODO: Test fromString() method.');
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::parse
+     */
+    public function testStaticParse()
+    {
+        $this->markTestIncomplete('TODO: Test parse() method.');
+    }
+
+    /**
      * @covers \Clinner\Command\Command::__construct
      */
     public function testConstructorDefaults()
@@ -131,7 +147,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('none'))
+            ->setMethods(null)
             ->getMock();
 
         $this->_setPrivateProperty($command, '_name', $name);
@@ -148,7 +164,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('none'))
+            ->setMethods(null)
             ->getMock();
 
         $this->assertAttributeEmpty('_name', $command);
@@ -168,7 +184,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('none'))
+            ->setMethods(null)
             ->getMock();
 
         $this->_setPrivateProperty($command, '_arguments', $args);
@@ -185,7 +201,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('none'))
+            ->setMethods(null)
             ->getMock();
 
         $this->assertAttributeEmpty('_arguments', $command);
@@ -208,7 +224,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('none'))
+            ->setMethods(null)
             ->getMock();
 
         $this->assertAttributeEmpty('_arguments', $command);
@@ -229,7 +245,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('none'))
+            ->setMethods(null)
             ->getMock();
 
         $this->_setPrivateProperty($command, '_options', $opts);
@@ -246,7 +262,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('none'))
+            ->setMethods(null)
             ->getMock();
 
         $this->assertAttributeEmpty('_options', $command);
@@ -269,7 +285,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('none'))
+            ->setMethods(null)
             ->getMock();
 
         $this->assertAttributeEmpty('_options', $command);
@@ -296,7 +312,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('none'))
+            ->setMethods(null)
             ->getMock();
 
         $this->_setPrivateProperty($command, '_options', $opts);
@@ -322,7 +338,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
-            ->setMethods(array('none'))
+            ->setMethods(null)
             ->getMock();
 
         $this->_setPrivateProperty($command, '_options', $opts);
@@ -330,6 +346,184 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $response = $command->getOption($optName, $defaultValue);
 
         $this->assertEquals($defaultValue, $response);
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::setOption
+     */
+    public function testSetOption()
+    {
+        $optName = 'option-name';
+        $optValue = 'option-value';
+
+        $opts = $this->getMock('\\Clinner\\ValueHolder');
+        $opts->expects($this->once())
+            ->method('set')
+            ->with($this->equalTo($optName), $this->equalTo($optValue));
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+        $this->_setPrivateProperty($command, '_options', $opts);
+
+        $response = $command->setOption($optName, $optValue);
+
+        $this->assertSame($command, $response);
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::pipe
+     */
+    public function testPipe()
+    {
+        $this->markTestIncomplete('TODO: Test pipe() method.');
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::getPipedCommand
+     */
+    public function testGetPipedCommand()
+    {
+        $pipeableCommandMock = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+        $this->_setPrivateProperty($command, '_next', $pipeableCommandMock);
+
+        $this->assertSame($pipeableCommandMock, $command->getPipedCommand());
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::hasPipedCommand
+     */
+    public function testHasPipedCommandWithCommand()
+    {
+        $pipeableCommandMock = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+        $this->_setPrivateProperty($command, '_next', $pipeableCommandMock);
+
+        $this->assertTrue($command->hasPipedCommand());
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::hasPipedCommand
+     */
+    public function testHasPipedCommandWithoutCommand()
+    {
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $this->assertFalse($command->hasPipedCommand());
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::getExitCode
+     */
+    public function testGetExitCode()
+    {
+        $exitCode = 12;
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+        $this->_setPrivateProperty($command, '_exitCode', $exitCode);
+
+        $this->assertEquals($exitCode, $command->getExitCode());
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::getOutput
+     */
+    public function testGetOutput()
+    {
+        $output = 'Some nice output from some commands.';
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+        $this->_setPrivateProperty($command, '_output', $output);
+
+        $this->assertEquals($output, $command->getOutput());
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::getOutputAsArray
+     * @dataProvider getDataSetsForGetOutputAsArray
+     */
+    public function testGetOutputAsArray($output, $delimiter, $expectedResponse)
+    {
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+        $this->_setPrivateProperty($command, '_output', $output);
+
+        $this->assertEquals($expectedResponse, $command->getOutputAsArray($delimiter));
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::run
+     * @covers \Clinner\Command\Command::_run
+     */
+    public function testRun()
+    {
+        $this->markTestIncomplete('TODO: Test the run() method.');
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::toCommandString
+     */
+    public function testToCommandString()
+    {
+        $this->markTestIncomplete('TODO: Test the toCommandString() method.');
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::__toString
+     */
+    public function testToString()
+    {
+        $name = 'Command name';
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getName'))
+            ->getMock();
+        $command->expects($this->once())
+            ->method('getName')
+            ->will($this->returnValue($name));
+
+        $this->assertEquals($name, $command->__toString());
+    }
+
+    /**
+     * Data provider for getOutputAsArray
+     * @return array
+     */
+    public function getDataSetsForGetOutputAsArray()
+    {
+        return array(
+            array('', ' ', array()),
+            array('    ', "\n", array('    ')),
+            array("abc\n\ndef ", "\n", array('abc', 'def ')),
+        );
     }
 
     /**
