@@ -6,7 +6,7 @@ php:
 
 before_install:
   - wget http://getcomposer.org/composer.phar
-  - php composer.phar install
+  - php composer.phar update
 
 notifications:
   email:
