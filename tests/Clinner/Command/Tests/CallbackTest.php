@@ -103,4 +103,41 @@ class CallbackTest extends \PHPUnit_Framework_TestCase
         // Output must be a string after the command is run with the given $closure
         $this->assertEquals('Some nifty output', $callback->getOutput());
     }
+
+    public function testGetCallbackCode()
+    {
+        $closure = function() {
+            echo 'Some nifty code';
+        };
+        $callback = new Callback($closure);
+
+        $result = $callback->getCallbackCode();
+
+        // Adding this ad-hoc regular expression to minimize the possible errors
+        // that might occur while trying to match the source code string against an
+        // expected value.
+        $regexp = '#^\s*function\s*\(\s*\)\s*{\s*echo\s*\'Some nifty code\';\s*}\s*$#';
+
+        $this->assertRegExp($regexp, $result);
+    }
+
+    /**
+     * @depends testGetCallbackCode
+     */
+    public function testToCommandString()
+    {
+        $expected = 'callback function code';
+
+        $callback = $this->getMockBuilder('\\Clinner\\Command\\Callback')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getCallbackCode'))
+            ->getMock();
+        $callback->expects($this->once())
+            ->method('getCallbackCode')
+            ->will($this->returnValue($expected));
+
+        $result = $callback->toCommandString();
+
+        $this->assertEquals($expected, $result);
+    }
 }
