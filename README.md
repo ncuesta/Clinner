@@ -23,8 +23,25 @@
 
 ### Simple usage
 
-The most basic use of `Clinner` consists of including [the PHAR file](https://github.com/ncuesta/Clinner/blob/master/clinner.phar?raw=true)
-and using its `Command` class:
+The most basic use of `Clinner` consists of installing it as a dependency via Composer and then including Composer's `autoloader.php` in your code:
+
+1. Create (if needed) a `composer.json` file or add an entry to your existing one:  
+```json
+{
+    # ...Your nifty project's information...
+    "require": {
+        "ncuesta/clinner": "dev-master"
+    }
+}
+```
+
+2. Include the `autoload.php` file on your code:  
+```php
+<?php
+    require_once 'phar://clinner.phar/autoload.php';
+```
+
+3. Start using commands *right away*!  
 
 ```php
 <?php
