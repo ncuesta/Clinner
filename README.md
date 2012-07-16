@@ -10,7 +10,7 @@
 
   * Minimalistic.
   * Simple and easy to use.
-  * `Clinner` uses [Composer](http://getcomposer.org). You can use it as a dependency on your project and have it autoloaded.
+  * `Clinner` uses [Composer](http://getcomposer.org).
   * Fluent API.
   * Higher-level and object oriented interface to commands.
   * Command pipes, **regardless of the underlying OS**.
@@ -23,7 +23,8 @@
 
 ### Simple usage
 
-The most basic use of `Clinner` consists of installing it as a dependency via Composer and then including Composer's `autoloader.php` in your code:
+The most basic use of `Clinner` consists of installing it as a dependency via Composer
+and then including Composer's `autoloader.php` in your code:
 
 1. Create (if needed) a `composer.json` file or add an entry to your existing one:  
 ```json
@@ -47,10 +48,16 @@ The most basic use of `Clinner` consists of installing it as a dependency via Co
 ```php
     <?php
 
-        // List current working directory's files and store the list as a string
+        /*
+         * List current working directory's files
+         * and store the list as a string.
+         */
         require_once __DIR__ . '/vendor/autoload.php';
-    
-        $command = new \Clinner\Command\Command('ls');
+
+        use \Clinner\Command\Command;
+
+
+        $command = new Command('ls');
         $files = $command
             ->run()
             ->getOutput();
@@ -63,8 +70,9 @@ The most basic use of `Clinner` consists of installing it as a dependency via Co
             echo 'Something didn\'t work as expected...';
         }
 
-        // There's also a factory method that allows to make best use of the fluent API
-        echo \Clinner\Command\Command::create('ls')
+        // There's also a factory method that allows
+        // to make best use of the fluent API
+        echo Command::create('ls')
             ->run()
             ->getOutput();
 ```
@@ -72,19 +80,24 @@ The most basic use of `Clinner` consists of installing it as a dependency via Co
 ### Passing arguments
 
 Commands crave for arguments, so `Clinner` offers a way to satisfying them.
-By passing in a second argument to the factory method or the constructor, or using the dedicated setter
-method `setArguments()`.
+By passing in a second argument to the factory method or the constructor, or
+using the dedicated setter method `setArguments()`.
 
 ```php
     <?php
 
-        // Commands will most certainly take arguments, so let's try something with them
-        $command = new \Clinner\Command\Command('cat', array('/etc/hosts'));
+        use \Clinner\Command\Command;
+
+
+        // Commands will most certainly take arguments,
+        // so let's try something with them
+        $command = new Command('cat', array('/etc/hosts'));
         // This will run `cat /etc/hosts`
         $command->run();
 
-        // You might also use its factory method to take even more advantage of the fluent API
-        echo \Clinner\Command\Command::create('cat', array('/etc/hosts'))
+        // You might also use its factory method
+        // to take even more advantage of the fluent API
+        echo Command::create('cat', array('/etc/hosts'))
             ->run()
             ->getOutput();
 ```
@@ -106,8 +119,12 @@ Let's see an example:
 ```php
     <?php
 
-        // `cut` command won't work if key-value pairs of arguments are joined with '=':
-        $command = \Clinner\Command\Command::create(
+        use \Clinner\Command\Command;
+
+
+        // `cut` command won't work if key-value pairs of arguments
+        // are joined with '=':
+        $command = Command::create(
             'cut',
             array(
                 '-d' => ':',
@@ -116,11 +133,14 @@ Let's see an example:
             )
         );
 
-        $command->run(); // => will run `cut -d=: -f=1 /etc/passwd` (WRONG)
+        $command->run();
+            // => will run `cut -d=: -f=1 /etc/passwd` (WRONG)
 
+        // Change the delimiter to '' (an empty string)
         $command->setOptions(array('delimiter' => ''));
 
-        $command->run(); // => will run `cut -d: -f1 /etc/passwd` (CORRECT)
+        $command->run();
+            // => will run `cut -d: -f1 /etc/passwd` (CORRECT)
 ```
 
 ### Advanced usage: Commands pipes
@@ -133,8 +153,11 @@ For example, if you want to run `ls -a | grep -i clinner`, you can:
 ```php
     <?php
 
-        $grepCommand = \Clinner\Command\Command::create('grep', array('-i', 'clinner'));
-        $lsCommand   = \Clinner\Command\Command::create('ls', array('-a'));
+        use \Clinner\Command\Command;
+
+
+        $grepCommand = Command::create('grep', array('-i', 'clinner'));
+        $lsCommand   = Command::create('ls', array('-a'));
 
         $lsCommand
             ->pipe($grepCommand)
@@ -143,7 +166,6 @@ For example, if you want to run `ls -a | grep -i clinner`, you can:
         $pipeOutput = $lsCommand->getOutput();
 
         // Or the same thing in an uglier but more pro way
-        use \Clinner\Command\Command;
 
         $pipeOutput = Command::create('ls', array('-a'))
             ->pipe(Command::create('grep', array('-i', 'clinner')))
@@ -168,6 +190,10 @@ to the next command in the pipe, if any.
 
 ```php
     <?php
+
+        use \Clinner\Command\Command;
+        use \Clinner\Command\Callback;
+
 
         // Get all the usernames in the system that contain an 'a' in them
         $callbackCommand = new Callback(function($input) {
