@@ -43,7 +43,7 @@ and then including Composer's `autoloader.php` in your code:
         require_once __DIR__ . '/vendor/autoload.php';
 ```
 
-3. Start using commands *right away*!  
+3. Start using commands *right away*!
 ```php
     <?php
 
@@ -83,22 +83,22 @@ By passing in a second argument to the factory method or the constructor, or
 using the dedicated setter method `setArguments()`.
 
 ```php
-    <?php
+<?php
 
-        use \Clinner\Command\Command;
+    use \Clinner\Command\Command;
 
 
-        // Commands will most certainly take arguments,
-        // so let's try something with them
-        $command = new Command('cat', array('/etc/hosts'));
-        // This will run `cat /etc/hosts`
-        $command->run();
+    // Commands will most certainly take arguments,
+    // so let's try something with them
+    $command = new Command('cat', array('/etc/hosts'));
+    // This will run `cat /etc/hosts`
+    $command->run();
 
-        // You might also use its factory method
-        // to take even more advantage of the fluent API
-        echo Command::create('cat', array('/etc/hosts'))
-            ->run()
-            ->getOutput();
+    // You might also use its factory method
+    // to take even more advantage of the fluent API
+    echo Command::create('cat', array('/etc/hosts'))
+        ->run()
+        ->getOutput();
 ```
 
 Arguments can either be key-value pairs or just values. Key value pairs will be joined using a
@@ -116,30 +116,30 @@ of arguments. If not specified, it will default to the equals sign (`=`).
 Let's see an example:
 
 ```php
-    <?php
+<?php
 
-        use \Clinner\Command\Command;
+    use \Clinner\Command\Command;
 
 
-        // `cut` command won't work if key-value pairs of arguments
-        // are joined with '=':
-        $command = Command::create(
-            'cut',
-            array(
-                '-d' => ':',
-                '-f' => 1,
-                '/etc/passwd',
-            )
-        );
+    // `cut` command won't work if key-value pairs of arguments
+    // are joined with '=':
+    $command = Command::create(
+        'cut',
+        array(
+            '-d' => ':',
+            '-f' => 1,
+            '/etc/passwd',
+        )
+    );
 
-        $command->run();
-            // => will run `cut -d=: -f=1 /etc/passwd` (WRONG)
+    $command->run();
+        // => will run `cut -d=: -f=1 /etc/passwd` (WRONG)
 
-        // Change the delimiter to '' (an empty string)
-        $command->setOptions(array('delimiter' => ''));
+    // Change the delimiter to '' (an empty string)
+    $command->setOptions(array('delimiter' => ''));
 
-        $command->run();
-            // => will run `cut -d: -f1 /etc/passwd` (CORRECT)
+    $command->run();
+        // => will run `cut -d: -f1 /etc/passwd` (CORRECT)
 ```
 
 ### Advanced usage: Commands pipes
@@ -150,26 +150,26 @@ of a command is sent to the one that is piped to it.
 For example, if you want to run `ls -a | grep -i clinner`, you can:
 
 ```php
-    <?php
+<?php
 
-        use \Clinner\Command\Command;
+    use \Clinner\Command\Command;
 
 
-        $grepCommand = Command::create('grep', array('-i', 'clinner'));
-        $lsCommand   = Command::create('ls', array('-a'));
+    $grepCommand = Command::create('grep', array('-i', 'clinner'));
+    $lsCommand   = Command::create('ls', array('-a'));
 
-        $lsCommand
-            ->pipe($grepCommand)
-            ->run();
+    $lsCommand
+        ->pipe($grepCommand)
+        ->run();
 
-        $pipeOutput = $lsCommand->getOutput();
+    $pipeOutput = $lsCommand->getOutput();
 
-        // Or the same thing in an uglier but more pro way
+    // Or the same thing in an uglier but more pro way
 
-        $pipeOutput = Command::create('ls', array('-a'))
-            ->pipe(Command::create('grep', array('-i', 'clinner')))
-            ->run()
-            ->getOutput();
+    $pipeOutput = Command::create('ls', array('-a'))
+        ->pipe(Command::create('grep', array('-i', 'clinner')))
+        ->run()
+        ->getOutput();
 ```
 
 Command pipes are not limited to a number of commands, you only need *at least* two commands.
@@ -188,31 +188,31 @@ or `print` or any other output method) will be considered as the command output 
 to the next command in the pipe, if any.
 
 ```php
-    <?php
+<?php
 
-        use \Clinner\Command\Command;
-        use \Clinner\Command\Callback;
+    use \Clinner\Command\Command;
+    use \Clinner\Command\Callback;
 
 
-        // Get all the usernames in the system that contain an 'a' in them
-        $callbackCommand = new Callback(function($input) {
-            foreach (explode("\n", $input) as $line) {
-                if (false !== strchr($line, 'a')) {
-                    echo "$line\n";
-                }
+    // Get all the usernames in the system that contain an 'a' in them
+    $callbackCommand = new Callback(function($input) {
+        foreach (explode("\n", $input) as $line) {
+            if (false !== strchr($line, 'a')) {
+                echo "$line\n";
             }
-        });
+        }
+    });
 
-        $systemUsers = Command::create('cat', array('/etc/passwd'))
-            ->pipe(
-                Command::create('grep', array('-v' => '^#'), array('delimiter' => ' '))
-            )
-            ->pipe(
-                Command::create('cut', array('-d' => ':', '-f' => 1), array('delimiter' => ''))
-            )
-            ->pipe($callbackCommand)
-            ->run()
-            ->getOutputAsArray("\n");
+    $systemUsers = Command::create('cat', array('/etc/passwd'))
+        ->pipe(
+            Command::create('grep', array('-v' => '^#'), array('delimiter' => ' '))
+        )
+        ->pipe(
+            Command::create('cut', array('-d' => ':', '-f' => 1), array('delimiter' => ''))
+        )
+        ->pipe($callbackCommand)
+        ->run()
+        ->getOutputAsArray("\n");
 ```
 
 ## Requirements
