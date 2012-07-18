@@ -143,45 +143,6 @@ Let's see an example:
         // => will run `cut -d: -f1 /etc/passwd` (CORRECT)
 ```
 
-### Creating commands from string
-
-As of `0.1.2` it is possible to create a `Command` instance from a string, using
-the command as if you had written it in a CLI.
-
-For instance, the following command could be run on the CLI:
-
-```bash
-~$ cat /etc/hosts | grep localhost | tr -s "\t" " "
-```
-
-Would output all the lines in the `/etc/hosts` file that contain the string `localhost` with any
-tab (`\t`) indent replaced by a single blank space (` `).
-
-This very same command can be passed as a `string` to `\Clinner\Command\Command::fromString()` and
-a new `Command` instance representing this commands chain will be returned:
-
-```php
-<?php
-
-    use \Clinner\Command\Command;
-    
-    
-    $commandString = 'cat /etc/hosts | grep localhost | tr -s "\t" " "';
-    $command = Command::fromString($commandString);
-    
-    // This is equivalent to:
-    $command = Command::create('cat', array('/etc/hosts'))
-        ->pipe(
-            Command::create('grep', array('localhost'))
-        )
-        -> pipe(
-            Command::create('tr', array('-s', '"\t"', '" "'))
-        );
-```
-
-And then you can work with the newly created `Command` instance as usual, and pipe other
-`Command`s to it.
-
 ### Advanced usage: Commands pipes
 
 Commands can be piped just like in any Unix shell. The basics of command pipes is that the output
@@ -254,6 +215,45 @@ to the next command in the pipe, if any.
         ->run()
         ->getOutputAsArray("\n");
 ```
+
+### Creating commands from string
+
+As of `0.1.2` it is possible to create a `Command` instance from a string, using
+the command as if you had written it in a CLI.
+
+For instance, the following command could be run on the CLI:
+
+```bash
+~$ cat /etc/hosts | grep localhost | tr -s "\t" " "
+```
+
+Would output all the lines in the `/etc/hosts` file that contain the string `localhost` with any
+tab (`\t`) indent replaced by a single blank space (` `).
+
+This very same command can be passed as a `string` to `\Clinner\Command\Command::fromString()` and
+a new `Command` instance representing this commands chain will be returned:
+
+```php
+<?php
+
+    use \Clinner\Command\Command;
+    
+    
+    $commandString = 'cat /etc/hosts | grep localhost | tr -s "\t" " "';
+    $command = Command::fromString($commandString);
+    
+    // This is equivalent to:
+    $command = Command::create('cat', array('/etc/hosts'))
+        ->pipe(
+            Command::create('grep', array('localhost'))
+        )
+        -> pipe(
+            Command::create('tr', array('-s', '"\t"', '" "'))
+        );
+```
+
+And then you can work with the newly created `Command` instance as usual, and pipe other
+`Command`s or even `Callback`s to it.
 
 ## Requirements
 
