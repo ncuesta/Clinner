@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Clinner by ncuesta</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Clinner</h1>
+        <h2>Command execution abstraction for PHP.</h2>
+        <a href="https://github.com/ncuesta/Clinner" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>Clinner</h1>
+
+<p><a href="http://travis-ci.org/ncuesta/Clinner"><img src="https://secure.travis-ci.org/ncuesta/Clinner.png" alt="Build Status"></a></p>
+
+<p><code>Clinner</code> is a PHP 5.3+ Command-Line Interface commands execution abstraction.</p>
+
+<h2>Advantages</h2>
+
+<p><code>Clinner</code> has the following benefits:</p>
+
+<ul>
+<li>Minimalistic.</li>
+<li>Simple and easy to use.</li>
+<li>
+<code>Clinner</code> uses <a href="http://getcomposer.org">Composer</a>.</li>
+<li>Fluent API.</li>
+<li>Higher-level and object oriented interface to commands.</li>
+<li>Command pipes, <strong>regardless of the underlying OS</strong>.</li>
+<li>Commands might be actual command-line executables or PHP code.</li>
+<li><em>Yes, you can mix commands and PHP code in an OO way!</em></li>
+<li>Easily extendable through Interface implementation.</li>
+<li>MIT Licensed.</li>
+</ul><h2>Usage</h2>
+
+<h3>Simple usage</h3>
+
+<p>The most basic use of <code>Clinner</code> consists of installing it as a dependency via Composer
+and then including Composer's <code>autoloader.php</code> in your code:</p>
+
+<ol>
+<li>
+<p>Create (if needed) a <code>composer.json</code> file or add an entry to your existing one:  </p>
+
+<div class="highlight">
+<pre><span class="p">{</span>
+    <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"my/nifty-project"</span><span class="p">,</span>
+
+    <span class="nt">"require"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">"ncuesta/clinner"</span><span class="p">:</span> <span class="s2">"dev-master"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+</div>
+</li>
+<li>
+<p>Include Composer's <code>autoload.php</code> file on your code:</p>
+
+<div class="highlight">
+<pre><span class="cp">&lt;?php</span>
+
+    <span class="k">require_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">'/vendor/autoload.php'</span><span class="p">;</span>
+</pre>
+</div>
+</li>
+<li>
+<p>Start using commands <em>right away</em>!</p>
+
+<div class="highlight">
+<pre><span class="cp">&lt;?php</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * List current working directory's files</span>
+<span class="cm">     * and store the list as a string.</span>
+<span class="cm">     */</span>
+    <span class="k">require_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">'/vendor/autoload.php'</span><span class="p">;</span>
+
+    <span class="k">use</span> <span class="nx">\Clinner\Command\Command</span><span class="p">;</span>
+
+    <span class="nv">$command</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Command</span><span class="p">(</span><span class="s1">'ls'</span><span class="p">);</span>
+    <span class="nv">$files</span> <span class="o">=</span> <span class="nv">$command</span>
+        <span class="o">-&gt;</span><span class="na">run</span><span class="p">()</span>
+        <span class="o">-&gt;</span><span class="na">getOutput</span><span class="p">();</span>
+    <span class="c1">// Or get them as an array</span>
+    <span class="nv">$filesArray</span> <span class="o">=</span> <span class="nv">$command</span><span class="o">-&gt;</span><span class="na">getOutputAsArray</span><span class="p">();</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$command</span><span class="o">-&gt;</span><span class="na">getExitCode</span><span class="p">()</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="s1">'Everything went fine.'</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="s1">'Something didn\'t work as expected...'</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// There's also a factory method that allows</span>
+    <span class="c1">// to make best use of the fluent API</span>
+    <span class="k">echo</span> <span class="nx">Command</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">'ls'</span><span class="p">)</span>
+        <span class="o">-&gt;</span><span class="na">run</span><span class="p">()</span>
+        <span class="o">-&gt;</span><span class="na">getOutput</span><span class="p">();</span>
+</pre>
+</div>
+</li>
+</ol><h3>Passing arguments</h3>
+
+<p>Commands crave for arguments, so <code>Clinner</code> offers a way to satisfying them.
+By passing in a second argument to the factory method or the constructor, or
+using the dedicated setter method <code>setArguments()</code>.</p>
+
+<div class="highlight">
+<pre><span class="cp">&lt;?php</span>
+
+    <span class="k">use</span> <span class="nx">\Clinner\Command\Command</span><span class="p">;</span>
+
+
+    <span class="c1">// Commands will most certainly take arguments,</span>
+    <span class="c1">// so let's try something with them</span>
+    <span class="nv">$command</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Command</span><span class="p">(</span><span class="s1">'cat'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'/etc/hosts'</span><span class="p">));</span>
+    <span class="c1">// This will run `cat /etc/hosts`</span>
+    <span class="nv">$command</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
+
+    <span class="c1">// You might also use its factory method</span>
+    <span class="c1">// to take even more advantage of the fluent API</span>
+    <span class="k">echo</span> <span class="nx">Command</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">'cat'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'/etc/hosts'</span><span class="p">))</span>
+        <span class="o">-&gt;</span><span class="na">run</span><span class="p">()</span>
+        <span class="o">-&gt;</span><span class="na">getOutput</span><span class="p">();</span>
+</pre>
+</div>
+
+
+<p>Arguments can either be key-value pairs or just values. Key value pairs will be joined using a
+<code>delimiter</code> (see <strong>Options</strong> section for more information).</p>
+
+<h3>Options</h3>
+
+<p>Options allow customization of different <code>Command</code> behaviors. They can be passed in as a third
+argument for the factory method or constructor, or set via the <code>setOptions()</code> method.</p>
+
+<p>Currently there's only one thing that can be customized for the <code>Command</code> class, but it's worth
+noting it: you might specify the delimiter, a <code>string</code> that will be used to join key-value pairs
+of arguments. If not specified, it will default to the equals sign (<code>=</code>).</p>
+
+<p>Let's see an example:</p>
+
+<div class="highlight">
+<pre><span class="cp">&lt;?php</span>
+
+    <span class="k">use</span> <span class="nx">\Clinner\Command\Command</span><span class="p">;</span>
+
+
+    <span class="c1">// `cut` command won't work if key-value pairs of arguments</span>
+    <span class="c1">// are joined with '=':</span>
+    <span class="nv">$command</span> <span class="o">=</span> <span class="nx">Command</span><span class="o">::</span><span class="na">create</span><span class="p">(</span>
+        <span class="s1">'cut'</span><span class="p">,</span>
+        <span class="k">array</span><span class="p">(</span>
+            <span class="s1">'-d'</span> <span class="o">=&gt;</span> <span class="s1">':'</span><span class="p">,</span>
+            <span class="s1">'-f'</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">'/etc/passwd'</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">);</span>
+
+    <span class="nv">$command</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
+        <span class="c1">// =&gt; will run `cut -d=: -f=1 /etc/passwd` (WRONG)</span>
+
+    <span class="c1">// Change the delimiter to '' (an empty string)</span>
+    <span class="nv">$command</span><span class="o">-&gt;</span><span class="na">setOptions</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'delimiter'</span> <span class="o">=&gt;</span> <span class="s1">''</span><span class="p">));</span>
+
+    <span class="nv">$command</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
+        <span class="c1">// =&gt; will run `cut -d: -f1 /etc/passwd` (CORRECT)</span>
+</pre>
+</div>
+
+
+<h3>Advanced usage: Commands pipes</h3>
+
+<p>Commands can be piped just like in any Unix shell. The basics of command pipes is that the output
+of a command is sent to the one that is piped to it.</p>
+
+<p>For example, if you want to run <code>ls -a | grep -i clinner</code>, you can:</p>
+
+<div class="highlight">
+<pre><span class="cp">&lt;?php</span>
+
+    <span class="k">use</span> <span class="nx">\Clinner\Command\Command</span><span class="p">;</span>
+
+
+    <span class="nv">$grepCommand</span> <span class="o">=</span> <span class="nx">Command</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">'grep'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'-i'</span><span class="p">,</span> <span class="s1">'clinner'</span><span class="p">));</span>
+    <span class="nv">$lsCommand</span>   <span class="o">=</span> <span class="nx">Command</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">'ls'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'-a'</span><span class="p">));</span>
+
+    <span class="nv">$lsCommand</span>
+        <span class="o">-&gt;</span><span class="na">pipe</span><span class="p">(</span><span class="nv">$grepCommand</span><span class="p">)</span>
+        <span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
+
+    <span class="nv">$pipeOutput</span> <span class="o">=</span> <span class="nv">$lsCommand</span><span class="o">-&gt;</span><span class="na">getOutput</span><span class="p">();</span>
+
+    <span class="c1">// Or the same thing in an uglier but more pro way</span>
+
+    <span class="nv">$pipeOutput</span> <span class="o">=</span> <span class="nx">Command</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">'ls'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'-a'</span><span class="p">))</span>
+        <span class="o">-&gt;</span><span class="na">pipe</span><span class="p">(</span><span class="nx">Command</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">'grep'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'-i'</span><span class="p">,</span> <span class="s1">'clinner'</span><span class="p">)))</span>
+        <span class="o">-&gt;</span><span class="na">run</span><span class="p">()</span>
+        <span class="o">-&gt;</span><span class="na">getOutput</span><span class="p">();</span>
+</pre>
+</div>
+
+
+<p>Command pipes are not limited to a number of commands, you only need <em>at least</em> two commands.</p>
+
+<p>See next section for a more complex example involving 3 commands in a pipeline.</p>
+
+<h3>Advanced usage: Mixing PHP with commands</h3>
+
+<p>Apart from <code>Command</code> class, <code>Clinner</code> ships with a <code>Callback</code> command class that enables to
+mix both commands and PHP code in a command pipe. <em>Pretty cool, huh?</em></p>
+
+<p><code>Callback</code> class only takes a <code>Closure</code> or a function reference in its constructor and then
+is ready to run. That <code>Closure</code> function will receive the command's input as its first argument
+and is expected to return an exit code. Any information output by the function (either via <code>echo</code>
+or <code>print</code> or any other output method) will be considered as the command output and will be sent
+to the next command in the pipe, if any.</p>
+
+<div class="highlight">
+<pre><span class="cp">&lt;?php</span>
+
+    <span class="k">use</span> <span class="nx">\Clinner\Command\Command</span><span class="p">;</span>
+    <span class="k">use</span> <span class="nx">\Clinner\Command\Callback</span><span class="p">;</span>
+
+
+    <span class="c1">// Get all the usernames in the system that contain an 'a' in them</span>
+    <span class="nv">$callbackCommand</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Callback</span><span class="p">(</span><span class="k">function</span><span class="p">(</span><span class="nv">$input</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="nb">explode</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="nv">$input</span><span class="p">)</span> <span class="k">as</span> <span class="nv">$line</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">false</span> <span class="o">!==</span> <span class="nb">strchr</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="s1">'a'</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">echo</span> <span class="s2">"</span><span class="si">$line</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+
+    <span class="nv">$systemUsers</span> <span class="o">=</span> <span class="nx">Command</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">'cat'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'/etc/passwd'</span><span class="p">))</span>
+        <span class="o">-&gt;</span><span class="na">pipe</span><span class="p">(</span>
+            <span class="nx">Command</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">'grep'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'-v'</span> <span class="o">=&gt;</span> <span class="s1">'^#'</span><span class="p">),</span> <span class="k">array</span><span class="p">(</span><span class="s1">'delimiter'</span> <span class="o">=&gt;</span> <span class="s1">' '</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="o">-&gt;</span><span class="na">pipe</span><span class="p">(</span>
+            <span class="nx">Command</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">'cut'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'-d'</span> <span class="o">=&gt;</span> <span class="s1">':'</span><span class="p">,</span> <span class="s1">'-f'</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">),</span> <span class="k">array</span><span class="p">(</span><span class="s1">'delimiter'</span> <span class="o">=&gt;</span> <span class="s1">''</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="o">-&gt;</span><span class="na">pipe</span><span class="p">(</span><span class="nv">$callbackCommand</span><span class="p">)</span>
+        <span class="o">-&gt;</span><span class="na">run</span><span class="p">()</span>
+        <span class="o">-&gt;</span><span class="na">getOutputAsArray</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">);</span>
+</pre>
+</div>
+
+
+<h3>Creating commands from string</h3>
+
+<p>As of <code>0.1.2</code> it is possible to create a <code>Command</code> instance from a string, using
+the command as if you had written it in a CLI.</p>
+
+<p>For instance, the following command could be run on the CLI:</p>
+
+<div class="highlight">
+<pre>~<span class="nv">$ </span>cat /etc/hosts | grep localhost | tr -s <span class="s2">"\t"</span> <span class="s2">" "</span>
+</pre>
+</div>
+
+
+<p>Would output all the lines in the <code>/etc/hosts</code> file that contain the string <code>localhost</code> with any
+tab (<code>\t</code>) indent replaced by a single blank space (<code></code>).</p>
+
+<p>This very same command can be passed as a <code>string</code> to <code>\Clinner\Command\Command::fromString()</code> and
+a new <code>Command</code> instance representing this commands chain will be returned:</p>
+
+<div class="highlight">
+<pre><span class="cp">&lt;?php</span>
+
+    <span class="k">use</span> <span class="nx">\Clinner\Command\Command</span><span class="p">;</span>
+
+
+    <span class="nv">$commandString</span> <span class="o">=</span> <span class="s1">'cat /etc/hosts | grep localhost | tr -s "\t" " "'</span><span class="p">;</span>
+    <span class="nv">$command</span> <span class="o">=</span> <span class="nx">Command</span><span class="o">::</span><span class="na">fromString</span><span class="p">(</span><span class="nv">$commandString</span><span class="p">);</span>
+
+    <span class="c1">// This is equivalent to:</span>
+    <span class="nv">$command</span> <span class="o">=</span> <span class="nx">Command</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">'cat'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'/etc/hosts'</span><span class="p">))</span>
+        <span class="o">-&gt;</span><span class="na">pipe</span><span class="p">(</span>
+            <span class="nx">Command</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">'grep'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'localhost'</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="o">-&gt;</span> <span class="na">pipe</span><span class="p">(</span>
+            <span class="nx">Command</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">'tr'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'-s'</span><span class="p">,</span> <span class="s1">'"\t"'</span><span class="p">,</span> <span class="s1">'" "'</span><span class="p">))</span>
+        <span class="p">);</span>
+</pre>
+</div>
+
+
+<p>And then you can work with the newly created <code>Command</code> instance as usual, and pipe other
+<code>Command</code>s or even <code>Callback</code>s to it.</p>
+
+<h2>Requirements</h2>
+
+<p>The only requirement for <code>Clinner</code> is PHP version &gt;= 5.3.</p>
+
+<h2>Contributing</h2>
+
+<p>Please, feel free to fork this repo and improve it in any way you consider useful
+ -- Pull Requests are welcome!</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/ncuesta/Clinner/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/ncuesta/Clinner/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/ncuesta/Clinner"></a> is maintained by <a href="https://github.com/ncuesta">ncuesta</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-28341570-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
