@@ -62,6 +62,13 @@ class Callback implements CommandInterface, PipeableCommandInterface
     private $_output;
 
     /**
+     * Error output for this command.
+     *
+     * @var string
+     */
+    private $_errorOutput;
+
+    /**
      * Callback function/method that will be invoked when command is run.
      *
      * @var \Closure
@@ -143,7 +150,18 @@ class Callback implements CommandInterface, PipeableCommandInterface
     {
         return $this->_output;
     }
-    
+
+    /**
+     * Get the output for this command's execution.
+     * This method will only return a valid value after the command has been executed.
+     *
+     * @return string
+     */
+    public function getErrorOutput()
+    {
+        return $this->_errorOutput;
+    }
+
     /**
      * Get the code of the inner callback as string.
      *

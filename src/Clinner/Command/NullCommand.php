@@ -104,4 +104,15 @@ class NullCommand implements CommandInterface, PipingCommandInterface, PipeableC
     {
         return false;
     }
+
+    /**
+     * Get the output for this command's execution.
+     * This method will only return a valid value after the command has been executed.
+     *
+     * @return string
+     */
+    public function getErrorOutput()
+    {
+        return '';
+    }
 }

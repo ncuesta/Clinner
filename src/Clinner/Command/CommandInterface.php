@@ -43,7 +43,15 @@ interface CommandInterface
      * @return string
      */
     public function getOutput();
-    
+
+    /**
+     * Get the output for this command's execution.
+     * This method will only return a valid value after the command has been executed.
+     *
+     * @return string
+     */
+    public function getErrorOutput();
+
     /**
      * Get a string representing this command.
      *
