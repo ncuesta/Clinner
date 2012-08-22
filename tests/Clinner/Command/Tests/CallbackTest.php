@@ -90,7 +90,7 @@ class CallbackTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetOutput()
     {
-        $closure = function($a) {
+        $closure = function() {
             echo 'Some nifty output';
         };
         $callback = new Callback($closure);
@@ -102,6 +102,25 @@ class CallbackTest extends \PHPUnit_Framework_TestCase
 
         // Output must be a string after the command is run with the given $closure
         $this->assertEquals('Some nifty output', $callback->getOutput());
+    }
+
+    /**
+     * @depends testRun
+     */
+    public function testGetErrorOutput()
+    {
+        $closure = function() {
+            echo 'Do nothing';
+        };
+        $callback = new Callback($closure);
+
+        // Output must be null before the command is run
+        $this->assertNull($callback->getErrorOutput());
+
+        $callback->run();
+
+        // Output must remain null after the command is run with the given $closure
+        $this->assertNull($callback->getErrorOutput());
     }
 
     public function testGetCallbackCode()
