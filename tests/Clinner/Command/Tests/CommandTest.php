@@ -62,18 +62,54 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers \Clinner\Command\Command::fromString
+     * @covers \Clinner\Command\Command::parse
      */
-    public function testStaticFromString()
+    public function testStaticFromStringNoCommands()
     {
-        $this->markTestIncomplete('TODO: Test fromString() method.');
+        $command = Command::fromString('');
+
+        $this->assertInstanceOf('\\Clinner\\Command\\NullCommand', $command);
     }
 
     /**
+     * @covers \Clinner\Command\Command::fromString
      * @covers \Clinner\Command\Command::parse
      */
-    public function testStaticParse()
+    public function testStaticFromStringOneCommand()
     {
-        $this->markTestIncomplete('TODO: Test parse() method.');
+        $commandString = 'cat ~/test.html';
+
+        $command = Command::fromString($commandString);
+
+        $this->assertInstanceOf('\\Clinner\\Command\\Command', $command);
+
+        // Test that the inverse function also works
+        $this->assertEquals($commandString, $command->toCommandString());
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::fromString
+     * @covers \Clinner\Command\Command::parse
+     */
+    public function testStaticFromStringManyCommands()
+    {
+        $commandString = 'cat ~/test.html | tr -s " " | cut -d: -f2 | wc';
+        $commandsCount = 4;
+
+        $command = Command::fromString($commandString);
+
+        $this->assertInstanceOf('\\Clinner\\Command\\Command', $command);
+
+        // Test that the inverse function also works
+        $this->assertEquals($commandString, $command->toCommandString(true));
+
+        $count = 0;
+        while (null !== $command) {
+            $count++;
+            $command = $command->getPipedCommand();
+        }
+
+        $this->assertEquals($commandsCount, $count);
     }
 
     /**
@@ -488,11 +524,142 @@ class CommandTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Clinner\Command\Command::getErrorOutput
+     */
+    public function testGetErrorOutput()
+    {
+        $expectedValue = 'Nasty error output';
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+        $this->_setPrivateProperty($command, '_errorOutput', $expectedValue);
+
+        $this->assertEquals($expectedValue, $command->getErrorOutput());
+    }
+
+    /**
      * @covers \Clinner\Command\Command::toCommandString
      */
-    public function testToCommandString()
+    public function testToCommandStringNoArgsNoPipedCommands()
     {
-        $this->markTestIncomplete('TODO: Test the toCommandString() method.');
+        $commandName = 'cmd';
+
+        $valueHolderMock = $this->getMockBuilder('\\Clinner\\ValueHolder')
+            ->disableOriginalConstructor()
+            ->setMethods(array('isEmpty'))
+            ->getMock();
+        $valueHolderMock->expects($this->once())
+            ->method('isEmpty')
+            ->will($this->returnValue(true));
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getName', 'getArguments'))
+            ->getMock();
+        $command->expects($this->once())
+            ->method('getName')
+            ->will($this->returnValue($commandName));
+        $command->expects($this->once())
+            ->method('getArguments')
+            ->will($this->returnValue($valueHolderMock));
+
+        $response = $command->toCommandString(false);
+
+        $this->assertEquals($commandName, $response);
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::toCommandString
+     */
+    public function testToCommandStringWithArgsNoPipedCommands()
+    {
+        $commandName = 'cmd';
+        $delimiter = '=';
+        $arguments = array(
+            '--arg',
+            '-v' => '1',
+        );
+        $expectedString = 'cmd --arg -v=1';
+
+        $valueHolderMock = $this->getMockBuilder('\\Clinner\\ValueHolder')
+            ->disableOriginalConstructor()
+            ->setMethods(array('isEmpty', 'getAll'))
+            ->getMock();
+        $valueHolderMock->expects($this->once())
+            ->method('isEmpty')
+            ->will($this->returnValue(false));
+        $valueHolderMock->expects($this->once())
+            ->method('getAll')
+            ->will($this->returnValue($arguments));
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getName', 'getArguments', 'getOption'))
+            ->getMock();
+        $command->expects($this->once())
+            ->method('getName')
+            ->will($this->returnValue($commandName));
+        $command->expects($this->exactly(2))
+            ->method('getArguments')
+            ->will($this->returnValue($valueHolderMock));
+        $command->expects($this->once())
+            ->method('getOption')
+            ->with($this->equalTo('delimiter'), $this->equalTo(Command::DEFAULT_DELIMITER))
+            ->will($this->returnValue($delimiter));
+
+        $response = $command->toCommandString(false);
+
+        $this->assertEquals($expectedString, $response);
+    }
+
+    /**
+     * @covers \Clinner\Command\Command::toCommandString
+     */
+    public function testToCommandStringNoArgsWithPipedCommands()
+    {
+        $commandName = 'cmd';
+        $pipedCommandName = 'cmd2';
+        $expectedString = 'cmd ' . Command::PIPE . ' cmd2';
+
+        $valueHolderMock = $this->getMockBuilder('\\Clinner\\ValueHolder')
+            ->disableOriginalConstructor()
+            ->setMethods(array('isEmpty'))
+            ->getMock();
+        $valueHolderMock->expects($this->once())
+            ->method('isEmpty')
+            ->will($this->returnValue(true));
+
+        $pipedCommandMock = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(array('toCommandString'))
+            ->getMock();
+        $pipedCommandMock->expects($this->once())
+            ->method('toCommandString')
+            ->with($this->equalTo(true))
+            ->will($this->returnValue($pipedCommandName));
+
+        $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getName', 'getArguments', 'hasPipedCommand', 'getPipedCommand'))
+            ->getMock();
+        $command->expects($this->once())
+            ->method('getName')
+            ->will($this->returnValue($commandName));
+        $command->expects($this->once())
+            ->method('getArguments')
+            ->will($this->returnValue($valueHolderMock));
+        $command->expects($this->once())
+            ->method('hasPipedCommand')
+            ->will($this->returnValue(true));
+        $command->expects($this->once())
+            ->method('getPipedCommand')
+            ->will($this->returnValue($pipedCommandMock));
+
+        $response = $command->toCommandString(true);
+
+        $this->assertEquals($expectedString, $response);
     }
 
     /**
@@ -515,6 +682,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Data provider for getOutputAsArray
+     *
      * @return array
      */
     public function getDataSetsForGetOutputAsArray()
