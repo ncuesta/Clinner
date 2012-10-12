@@ -119,7 +119,8 @@ class Callback implements CommandInterface, PipingCommandInterface, PipeableComm
      *
      * @return \Clinner\Command\PipeableCommandInterface
      */
-    public function getPipedCommand() {
+    public function getPipedCommand()
+    {
         return $this->_next;
     }
 
