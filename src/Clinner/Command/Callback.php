@@ -45,8 +45,15 @@ namespace Clinner\Command;
  *
  * @author José Nahuel Cuesta Luengo <nahuelcuestaluengo@gmail.com>
  */
-class Callback implements CommandInterface, PipeableCommandInterface
+class Callback implements CommandInterface, PipingCommandInterface, PipeableCommandInterface
 {
+    /**
+     * A command piped to this one, if any.
+     *
+     * @var \Clinner\Command\PipeableCommandInterface
+     */
+    private $_next;
+
     /**
      * Exit code for this command.
      *
@@ -108,6 +115,64 @@ class Callback implements CommandInterface, PipeableCommandInterface
     }
 
     /**
+     * Get the command piped to this one, if any.
+     *
+     * @return \Clinner\Command\PipeableCommandInterface
+     */
+    public function getPipedCommand() {
+        return $this->_next;
+    }
+
+    /**
+     * Pipe $anotherCommand to this one, so that this command's output is directly
+     * sent to $anotherCommand's standard input.
+     *
+     * @param  \Clinner\Command\PipeableCommandInterface $anotherCommand The command to pipe.
+     * @param  bool                                      $appendToPipe   Whether $anotherCommand will be appended to
+     *                                                                   the currently piped commands (TRUE) or if it
+     *                                                                   will be added after this command, rearranging
+     *                                                                   the commands pipe to include it.
+     *
+     * @return \Clinner\Command\PipingCommandInterface This instance, for a fluent API.
+     */
+    public function pipe(PipeableCommandInterface $anotherCommand, $appendToPipe = true)
+    {
+        if (!$anotherCommand instanceof NullCommand) {
+            if ($this === $anotherCommand) {
+                // Cannot pipe a command to itself, need to clone it
+                $anotherCommand = clone $anotherCommand;
+            }
+
+            if ($appendToPipe) {
+                if ($this->hasPipedCommand()) {
+                    $this->_next->pipe($anotherCommand, true);
+                } else {
+                    $this->_next = $anotherCommand;
+                }
+            } else {
+                if ($this->hasPipedCommand()) {
+                    // Rearrange the commands pipe
+                    $anotherCommand->pipe($this->_next, false);
+                }
+
+                $this->_next = $anotherCommand;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Answer whether this command has a command piped to it.
+     *
+     * @return bool
+     */
+    public function hasPipedCommand()
+    {
+        return null !== $this->_next;
+    }
+
+    /**
      * Run this command and get the exit code for it.
      *
      * @param string $input (Optional) input string for this command.
@@ -120,11 +185,25 @@ class Callback implements CommandInterface, PipeableCommandInterface
 
         ob_start();
 
-        $this->_exitCode = $callback($input);
+        $exitCode = $callback($input);
 
-        $this->_output = ob_get_contents();
+        $output = ob_get_contents();
 
         ob_end_clean();
+
+        // Run the piped command, if any
+        if ($this->hasPipedCommand()) {
+            $pipedCommand = $this->getPipedCommand();
+
+            $pipedCommand->run($output);
+
+            $output      = $pipedCommand->getOutput();
+            $exitCode    = $pipedCommand->getExitCode();
+            $errorOutput = $pipedCommand->getErrorOutput();
+        }
+
+        $this->_output = $output;
+        $this->_exitCode = $exitCode;
 
         return $this;
     }
