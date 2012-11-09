@@ -4,9 +4,13 @@ php:
   - 5.3
   - 5.4
 
-before_install:
-  - wget http://getcomposer.org/composer.phar
-  - php composer.phar install
+before_script:
+  - composer install
+
+script: phpunit --coverage-clover "clover" --configuration=phpunit.xml.dist
+
+after_success:
+    - curl -sL https://bit.ly/artifact-uploader | php
 
 notifications:
   email:
