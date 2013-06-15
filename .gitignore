@@ -3,4 +3,3 @@ tests/output
 .idea
 phpunit.xml
 vendor/*
-composer.lock
