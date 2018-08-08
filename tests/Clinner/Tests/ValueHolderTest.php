@@ -19,7 +19,7 @@ use Clinner\ValueHolder;
  *
  * @author José Nahuel Cuesta Luengo <nahuelcuestaluengo@gmail.com>
  */
-class ValueHolderTest extends \PHPUnit_Framework_TestCase
+class ValueHolderTest extends \PHPUnit\Framework\TestCase
 {
     public function testStaticCreateWithoutInitialValues()
     {

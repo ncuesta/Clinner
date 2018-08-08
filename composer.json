@@ -17,11 +17,9 @@
         "symfony/class-loader": "~2.0"
     },
     "require-dev": {
-        "phpunit/phpunit-mock-objects": "1.2.0",
-        "phpunit/php-code-coverage": "*",
-        "phpunit/phpunit": "3.7.0"
+        "phpunit/phpunit": "~7.0"
     },
     "autoload": {
-        "psr-0": { "Clinner": "src/" }
+        "psr-4": { "Clinner\\": "src/Clinner/" }
     }
 }
