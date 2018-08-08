@@ -4,7 +4,7 @@
     "keywords": ["cli", "command", "pipe", "execution"],
     "type": "library",
     "homepage": "http://ncuesta.github.com/Clinner",
-    "version": "0.1.2",
+    "version": "1.0.0",
     "license": "MIT",
     "authors": [
         {
@@ -14,9 +14,10 @@
     ],
     "require": {
         "php": ">=5.3",
-        "symfony/class-loader": "dev-master"
+        "symfony/class-loader": "~2.0"
     },
     "require-dev": {
+        "phpunit/phpunit-mock-objects": "1.2.0",
         "phpunit/phpunit": "3.7.0"
     },
     "autoload": {
