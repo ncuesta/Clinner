@@ -20,7 +20,7 @@ use Clinner\ValueHolder;
  *
  * @author José Nahuel Cuesta Luengo <nahuelcuestaluengo@gmail.com>
  */
-class CommandTest extends \PHPUnit_Framework_TestCase
+class CommandTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @covers \Clinner\Command\Command::create
@@ -256,7 +256,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetArgumentsWithValueHolder()
     {
-        $args = $this->getMock('\\Clinner\\ValueHolder');
+        $args = $this->getMockBuilder('\\Clinner\\ValueHolder')->getMock();
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
@@ -317,7 +317,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetOptionsWithValueHolder()
     {
-        $opts = $this->getMock('\\Clinner\\ValueHolder');
+        $opts = $this->getMockBuilder('\\Clinner\\ValueHolder')->getMock();
 
         $command = $this->getMockBuilder('\\Clinner\\Command\\Command')
             ->disableOriginalConstructor()
@@ -340,7 +340,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
     {
         $optName = 'option-name';
 
-        $opts = $this->getMock('\\Clinner\\ValueHolder');
+        $opts = $this->getMockBuilder('\\Clinner\\ValueHolder')->getMock();
         $opts->expects($this->once())
             ->method('get')
             ->with($this->equalTo($optName))
@@ -366,7 +366,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $optName = 'option-name';
         $defaultValue = 'default';
 
-        $opts = $this->getMock('\\Clinner\\ValueHolder');
+        $opts = $this->getMockBuilder('\\Clinner\\ValueHolder')->getMock();
         $opts->expects($this->once())
             ->method('get')
             ->with($this->equalTo($optName), $this->equalTo($defaultValue))
@@ -392,7 +392,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $optName = 'option-name';
         $optValue = 'option-value';
 
-        $opts = $this->getMock('\\Clinner\\ValueHolder');
+        $opts = $this->getMockBuilder('\\Clinner\\ValueHolder')->getMock();
         $opts->expects($this->once())
             ->method('set')
             ->with($this->equalTo($optName), $this->equalTo($optValue));
